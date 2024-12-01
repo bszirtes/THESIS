@@ -21,7 +21,6 @@ def create_measurement_folder(folder_name, verbose):
 
 def run_scaphandre(folder_name, file_name, regex, nano, verbose):
     # Note: Make the regex more specific if possible.
-    # Updated Scaphandre command without unsupported arguments
     if nano > 0:
         command = f"scaphandre json --step 0 --step-nano {nano} --process-regex={regex} -f {folder_name}/{file_name}.json"
     else:
@@ -67,7 +66,7 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
                 print(f"[INFO] Using custom command: {command}")
 
             # Start Scaphandre
-            run_scaphandre(folder_name, file_name, r"\/" + program_exe, nano, verbose)
+            scaphandre_process = run_scaphandre(folder_name, file_name, r"\/" + program_exe, nano, verbose)
             time.sleep(5)
 
             # Run the command and measure the runtime
@@ -80,7 +79,14 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
             print(f"[INFO] Execution time: {runtime:.4f} seconds")
 
             # Kill Scaphandre and any related process
-            time.sleep(5)
+            if verbose:
+                print("[DEBUG] Shutting down Scaphandre process")
+            scaphandre_process.terminate()
+            try:
+                scaphandre_process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                print("[WARNING] Process did not terminate gracefully. Killing it...")
+                scaphandre_process.kill()
             subprocess.run('pkill -f scaphandre', shell=True)
             if program_exe == "beam.smp":
                 subprocess.run(f'pkill -f {program_exe}', shell=True)
@@ -108,16 +114,12 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
                     cmdline = consumer.get("cmdline", "")
                     consumption = consumer.get("consumption", 0.0)
 
-                    # Check if this process matches the one we are measuring
-                    # Note: Decide whether the zeros should be omitted!
                     if (program_exe in exe and consumption > 0.0):
                         if verbose:
-                            # DONE: Discard zero samples!
                             print(f"[DEBUG] Matching process found: '{exe}', cmdline: '{cmdline}', adding consumption: {consumption}")
                         total_consumption += consumption
                         number_samples += 1
 
-            # Done: Check if this calculation is valid for the final_consumption (Joules/Watts ?)
             # Calculate average energy if samples were found
             average_energy = total_consumption / number_samples if number_samples > 0 else 0
             final_consumption = average_energy * runtime

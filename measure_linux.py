@@ -117,16 +117,16 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
                         total_consumption += consumption
                         number_samples += 1
 
-            # Note: Check if this calculation is valid for the final_consumption (Joules/Watts ?)
+            # Done: Check if this calculation is valid for the final_consumption (Joules/Watts ?)
             # Calculate average energy if samples were found
             average_energy = total_consumption / number_samples if number_samples > 0 else 0
             final_consumption = average_energy * runtime
 
             # Print the final calculated values
-            print(f"[INFO] Sum of consumption samples: {total_consumption}W")
+            print(f"[INFO] Sum of consumption samples: {total_consumption} μW")
             print(f"[INFO] Number of samples: {number_samples}")
-            print(f"[INFO] Average energy per sample: {average_energy}W")
-            print(f"[INFO] Final energy consumption for this run: {final_consumption}J")
+            print(f"[INFO] Average energy per sample: {average_energy} μW")
+            print(f"[INFO] Final energy consumption for this run: {final_consumption} μJ")
 
             # Write results to the CSV file
             output_file = result_file if result_file else f"{program_exe}_{module}"

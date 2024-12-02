@@ -158,16 +158,16 @@ if __name__ == "__main__":
         epilog='GitHub repository: https://github.com/joegharbi/rosetta')
 
     # Define arguments
-    parser.add_argument('module', type=str, help='Module name (without extension for C++).')
-    parser.add_argument('function', type=str, help='Function name (optional for C++).')
-    parser.add_argument('parameters', nargs='+', type=str, help='Arguments for the function, separated by spaces.')
-    parser.add_argument('-c', '--cmd', type=str, default='', help='Optional command to run the executable directly.')
-    parser.add_argument('-e', '--exe', type=str, default='beam.smp', help='Program process name (e.g., beam.smp for Erlang or the executable for C++).')
-    parser.add_argument('-r', '--rep', type=int, default=1, help='Number of repetitions.')
-    parser.add_argument('-f', '--file', type=str, default='', help='CSV result filename prefix.')
-    parser.add_argument('--folder', type=str, default='measurements', help='Folder to store measurements.')
-    parser.add_argument('--nano', type=int, default=0, help='Amount of nanoseconds between each measurement.')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose output.')
+    parser.add_argument('module', type=str, help='module name (without extension for C++)')
+    parser.add_argument('function', type=str, help='function name (optional for C++)')
+    parser.add_argument('parameters', nargs='+', type=str, help='arguments for the function, separated by spaces')
+    parser.add_argument('-c', '--cmd', type=str, default='', help='optional command to run the executable directly')
+    parser.add_argument('-e', '--exe', type=str, default='beam.smp', help='program process name (e.g., beam.smp for Erlang or the executable for C++)')
+    parser.add_argument('-r', '--rep', type=int, default=1, help='number of repetitions')
+    parser.add_argument('-f', '--file', type=str, default='', help='CSV result filename prefix')
+    parser.add_argument('--folder', type=str, default='measurements', help='folder to store measurements')
+    parser.add_argument('--nano', type=int, default=0, help='amount of nanoseconds between each measurement')
+    parser.add_argument('-v', '--verbose', action='store_true', help='enable verbose output')
 
     # Parse arguments
     args = parser.parse_args()

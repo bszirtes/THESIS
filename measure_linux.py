@@ -36,7 +36,8 @@ def compile_program(program_exe, module):
         subprocess.run(f"erlc {module}.erl", shell=True)
     else:
         print(f"[INFO] Compiling C++ program: {module}.cpp")
-        subprocess.run(f"g++ {module}.cpp -o {module}", shell=True)
+        subprocess.run("cmake .", shell=True)
+        subprocess.run("make", shell=True)
 
 def run_program(module, function, parameter, program_exe):
     if program_exe == "beam.smp":
@@ -44,7 +45,7 @@ def run_program(module, function, parameter, program_exe):
         print(f"[INFO] Running Erlang command: {erl_command}")
         return erl_command
     else:
-        cpp_command = f"./{module} {parameter}"
+        cpp_command = f"./{module}.out {parameter}"
         print(f"[INFO] Running C++ command: {cpp_command}")
         return cpp_command
 

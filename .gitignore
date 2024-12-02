@@ -1,2 +1,7 @@
 *.beam
+*.cmake
+*.out
 measurements/
+CMakeFiles/
+CMakeCache.txt
+Makefile

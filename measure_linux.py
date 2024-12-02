@@ -132,9 +132,19 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
 
             # Write results to the CSV file
             output_file = result_file if result_file else f"{program_exe}_{module}"
-            with open(f"{output_file}.csv", 'a', newline='') as csv_file:
-                csv_writer = csv.writer(csv_file, delimiter=';')
-                csv_writer.writerow([module, function, parameter, number_samples, final_consumption, runtime])
+            if not os.path.exists(f"{output_file}.csv"):
+                if verbose:
+                    print(f"[DEBUG] Output file '{output_file}' created")
+                with open(f"{output_file}.csv", 'a', newline='') as csv_file:
+                    csv_writer = csv.writer(csv_file, delimiter=',')
+                    csv_writer.writerow(["Module", "Function", "Parameter", "Runtime (s)", "Samples", "Consumption (μJ)"])
+                    csv_writer.writerow([module, function, parameter, runtime, number_samples, final_consumption])
+            else:
+                if verbose:
+                    print(f"[DEBUG] Output file '{output_file}' exists")
+                with open(f"{output_file}.csv", 'a', newline='') as csv_file:
+                    csv_writer = csv.writer(csv_file, delimiter=',')
+                    csv_writer.writerow([module, function, parameter, runtime, number_samples, final_consumption])
 
             print(f"[INFO] Results saved to {output_file}.csv")
             print("------------------------------")
@@ -168,3 +178,4 @@ if __name__ == "__main__":
 
     # Exit the program
     sys.exit()
+

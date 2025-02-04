@@ -30,6 +30,7 @@ def run_scaphandre(folder_name, file_name, regex, nano, verbose):
     return subprocess.Popen(command, stdout=subprocess.PIPE if verbose else subprocess.DEVNULL,
                             stderr=subprocess.PIPE if verbose else subprocess.STDOUT, shell=True)
 
+# TODO: Make this optional with an argument
 def compile_program(program_exe, module):
     if program_exe == "beam.smp":
         print(f"[INFO] Compiling Erlang module: {module}.erl")
@@ -104,7 +105,7 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
             total_consumption = 0.0
             number_samples = 0
 
-            # Debug: print the expected process name
+            # Print the expected process name
             if verbose:
                 print(f"[DEBUG] Expected process name for energy consumption filtering: '{program_exe}'")
 
@@ -155,7 +156,7 @@ if __name__ == "__main__":
     # Create the parser
     parser = argparse.ArgumentParser(
         description='CLI to measure energy consumption of a program using Scaphandre',
-        epilog='GitHub repository: https://github.com/joegharbi/rosetta')
+        epilog='GitHub repository: https://github.com/bszirtes/THESIS')
 
     # Define arguments
     parser.add_argument('module', type=str, help='module name (without extension for C++)')

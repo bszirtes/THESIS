@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(prime_calculation)
+project(concurrent_load_balancer)
 
 # Add CAF include directory
 include_directories(/usr/include/caf)
@@ -8,10 +8,10 @@ include_directories(/usr/include/caf)
 link_directories(/usr/lib/x86_64-linux-gnu)
 
 # Add executable target
-add_executable(prime_calculation.out prime_calculation.cpp)
+add_executable(concurrent_load_balancer.out concurrent_load_balancer.cpp)
 
 # Link CAF libraries
-target_link_libraries(prime_calculation.out
+target_link_libraries(concurrent_load_balancer.out
     caf_core
     caf_io
     caf_openssl

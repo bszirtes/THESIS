@@ -12,6 +12,9 @@ if [ "$#" -lt 3 ]; then
     usage
 fi
 
+# Get the directory of the current script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Get script arguments
 CLIENT_COUNT=$1
 PING_COUNT=$2
@@ -33,7 +36,7 @@ fi
 if [ "$NO_SERVER" = false ]; then
     kubectl create namespace ping-pong
     echo "Deploying the CAF server..."
-    kubectl apply -f server/server-deployment.yaml
+    kubectl apply -f "$SCRIPT_DIR"/server/server-deployment.yaml
     echo "CAF server deployed."
 
     # Step 2: Wait for the server to be up and running (optional but recommended)
@@ -45,7 +48,7 @@ fi
 echo "Deploying $CLIENT_COUNT client(s)..."
 
 # Create the client Job YAML dynamically with parameters
-cat <<EOF >client/client-job.yaml
+cat <<EOF >"$SCRIPT_DIR"/client/client-job.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -71,7 +74,7 @@ spec:
 EOF
 
 # Step 4: Apply the dynamically generated client Job YAML
-kubectl apply -f client/client-job.yaml
+kubectl apply -f "$SCRIPT_DIR"/client/client-job.yaml
 
 # Step 5: Wait for the job to finish (optional, but useful for monitoring)
 echo "Waiting for client job(s) to complete..."

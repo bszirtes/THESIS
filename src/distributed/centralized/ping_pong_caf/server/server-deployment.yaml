@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caf-server
+  namespace: ping-pong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: caf-server
+  template:
+    metadata:
+      labels:
+        app: caf-server
+    spec:
+      containers:
+        - name: caf-server
+          image: localhost:5001/ping-pong-server:v1
+          command: ["/app/ping_pong_server"]
+          args:
+            - "--port=4242"
+            - "--max-conns=50"
+          ports:
+            - containerPort: 4242
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: caf-server
+  namespace: ping-pong
+spec:
+  selector:
+    app: caf-server
+  ports:
+    - protocol: TCP
+      port: 4242
+      targetPort: 4242

@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: caf-client
+  namespace: ping-pong
+spec:
+  completions: 8  # Set number of clients to run
+  parallelism: 8  # Set number of clients to run
+  template:
+    metadata:
+      labels:
+        app: caf-client
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: caf-client
+          image: localhost:5001/ping-pong-client:v2
+          command: ["/app/ping_pong_client"]
+          args:
+            - "--server=caf-server"
+            - "--pings=20"
+            - "--delay=1000"

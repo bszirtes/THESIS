@@ -18,5 +18,5 @@ spec:
           command: ["/app/ping_pong_client"]
           args:
             - "--server=caf-server"
-            - "--pings=20"
+            - "--pings=40"
             - "--delay=1000"

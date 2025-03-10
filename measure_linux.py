@@ -9,7 +9,7 @@ import datetime
 import os
 
 def create_measurement_folder(folder_name, verbose):
-    current_directory = os.path.dirname(os.path.realpath(__file__))
+    current_directory = os.getcwd()
     folder_path = os.path.join(current_directory, folder_name)
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -87,7 +87,7 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
             try:
                 scaphandre_process.wait(timeout=5)
             except subprocess.TimeoutExpired:
-                print("[WARNING] Process did not terminate gracefully. Killing it...")
+                print("[WARNING] Scaphandre process did not terminate gracefully. Killing it...")
                 scaphandre_process.kill()
             subprocess.run('pkill -f scaphandre', shell=True)
             if program_exe == "beam.smp":
@@ -139,14 +139,14 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
                     print(f"[DEBUG] Output file '{output_file}' created")
                 with open(f"{output_file}.csv", 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file, delimiter=',')
-                    csv_writer.writerow(["Module", "Function", "Parameter", "Runtime (s)", "Samples", "Consumption (μJ)"])
-                    csv_writer.writerow([module, function, parameter, runtime, number_samples, final_consumption])
+                    csv_writer.writerow(["Module", "Function", "Parameter", "Runtime (s)", "Samples", "Sample frequency (ns)", "Consumption (μJ)"])
+                    csv_writer.writerow([module, function, parameter, runtime, number_samples, nano, final_consumption])
             else:
                 if verbose:
                     print(f"[DEBUG] Output file '{output_file}' exists")
                 with open(f"{output_file}.csv", 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file, delimiter=',')
-                    csv_writer.writerow([module, function, parameter, runtime, number_samples, final_consumption])
+                    csv_writer.writerow([module, function, parameter, runtime, number_samples, nano, final_consumption])
 
             print(f"[INFO] Results saved to {output_file}.csv")
             print("------------------------------")

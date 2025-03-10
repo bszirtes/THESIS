@@ -111,16 +111,18 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
 
             for entry in data:
                 consumers = entry.get("consumers", [])
+                valid_entry = 0
                 for consumer in consumers:
                     exe = consumer.get("exe", "").lower()
                     cmdline = consumer.get("cmdline", "")
                     consumption = consumer.get("consumption", 0.0)
 
-                    if (program_exe in exe and consumption > 0.0):
+                    if (("scaphandre" not in exe and "dash" not in exe) and consumption > 0.0):
                         if verbose:
                             print(f"[DEBUG] Matching process found: '{exe}', cmdline: '{cmdline}', adding consumption: {consumption}")
                         total_consumption += consumption
-                        number_samples += 1
+                        valid_entry = 1
+                number_samples += valid_entry
 
             # Calculate average energy if samples were found
             average_energy = total_consumption / number_samples if number_samples > 0 else 0

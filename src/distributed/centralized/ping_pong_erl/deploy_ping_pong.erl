@@ -32,7 +32,8 @@ launch_deployment(Nodes, NumClients, PingCount, DelayMs, NoServer, Verbose) ->
     start_server(ServerNode, NoServer, Verbose),
     distribute_clients(Nodes, NumClients, PingCount, DelayMs, Verbose, ServerNode),
     io:format("All clients finished, terminating.~n"),
-    stop_server(NoServer).
+    stop_server(NoServer),
+    halt(0).
 
 start_server(_, true, _) ->
     io:format("Skipping server start as \"no-server\" was provided.~n");

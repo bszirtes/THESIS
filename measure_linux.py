@@ -32,7 +32,7 @@ def run_scaphandre(folder_name, file_name, regex, nano, verbose):
 
 # TODO: Make this optional with an argument
 def compile_program(program_exe, module):
-    if program_exe == "beam.smp":
+    if program_exe == "beam.smp" or program_exe == "erlang":
         print(f"[INFO] Compiling Erlang module: {module}.erl")
         subprocess.run(f"erlc {module}.erl", shell=True)
     else:
@@ -45,6 +45,10 @@ def run_program(module, function, parameter, program_exe):
         erl_command = f"erl -noshell -run {module} {function} {parameter} -s init stop"
         print(f"[INFO] Running Erlang command: {erl_command}")
         return erl_command
+    elif program_exe == "erlang":
+        distributed_erl_command = f"erl -noshell -sname 'runner@localhost' -setcookie cookie -run {module} {function} {parameter} -s init stop"
+        print(f"[INFO] Running Distributed Erlang command: {distributed_erl_command}")
+        return distributed_erl_command
     else:
         cpp_command = f"./{module}.out {parameter}"
         print(f"[INFO] Running C++ command: {cpp_command}")
@@ -57,7 +61,7 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
 
             # Set file name for Scaphandre output
             current_time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-            file_name = f"{module}__{function}__{parameter}__{current_time}"
+            file_name = f"{module}__{function}__{current_time}"
 
             # Compile if necessary and prepare the execution command
             if not measure_cmd:
@@ -141,14 +145,14 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
                     print(f"[DEBUG] Output file '{output_file}' created")
                 with open(f"{output_file}.csv", 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file, delimiter=',')
-                    csv_writer.writerow(["Module", "Function", "Parameter", "Runtime (s)", "Samples", "Sample frequency (ns)", "Consumption (μJ)"])
-                    csv_writer.writerow([module, function, parameter, runtime, number_samples, nano, final_consumption])
+                    csv_writer.writerow(["Module", "Function", "Parameter", "Runtime (s)", "Samples", "Sample frequency (ns)", "Consumption (μJ), File"])
+                    csv_writer.writerow([module, function, parameter, runtime, number_samples, nano, final_consumption, file_name])
             else:
                 if verbose:
                     print(f"[DEBUG] Output file '{output_file}' exists")
                 with open(f"{output_file}.csv", 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file, delimiter=',')
-                    csv_writer.writerow([module, function, parameter, runtime, number_samples, nano, final_consumption])
+                    csv_writer.writerow([module, function, parameter, runtime, number_samples, nano, final_consumption, file_name])
 
             print(f"[INFO] Results saved to {output_file}.csv")
             print("------------------------------")

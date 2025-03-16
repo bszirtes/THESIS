@@ -1,5 +1,5 @@
 Module,Function,Parameter,Runtime (s),Samples,Sample frequency (ns),"Consumption (μJ), File"
-deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,56.03797919400313,539,1000000,9243117.173422845,deploy_ping_pong____2025-03-16-16-36-52
+deploy_ping_pong,,"/home/eszibot/.kube/config 4 20 500",56.03797919400313,539,1000000,9243117.173422845,deploy_ping_pong____2025-03-16-16-36-52
 deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,56.567428174999804,549,1000000,9489127.500938898,deploy_ping_pong____2025-03-16-16-37-59
 deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,55.94381358999817,543,1000000,9053107.611947568,deploy_ping_pong____2025-03-16-16-39-05
 deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,73.54541068899925,698,1000000,12034594.616805209,deploy_ping_pong____2025-03-16-16-40-12

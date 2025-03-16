@@ -1,4 +1,4 @@
-Module,Function,Parameter,Runtime (s),Samples,Sample frequency (ns),"Consumption (μJ), File"
+Module,Function,Parameter,Runtime (s),Samples,Sample frequency (ns),Consumption (μJ), File
 deploy_ping_pong,deploy,"['server@localhost','client1@localhost','client2@localhost','client3@localhost'] 4 20 500",10.225616306999655,172,1000000,341838.8072321902,deploy_ping_pong__deploy__2025-03-16-16-16-07
 deploy_ping_pong,deploy,"['server@localhost','client1@localhost','client2@localhost','client3@localhost'] 4 20 500",10.238488480999877,173,1000000,349922.88638579723,deploy_ping_pong__deploy__2025-03-16-16-16-27
 deploy_ping_pong,deploy,"['server@localhost','client1@localhost','client2@localhost','client3@localhost'] 4 20 500",10.259731758000271,171,1000000,507463.39654455835,deploy_ping_pong__deploy__2025-03-16-16-16-48

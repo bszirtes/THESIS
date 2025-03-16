@@ -155,7 +155,7 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
                     print(f"[DEBUG] Output file '{output_file}' created")
                 with open(f"{output_file}.csv", 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file, delimiter=',')
-                    csv_writer.writerow(["Module", "Function", "Parameter", "Runtime (s)", "Samples", "Sample frequency (ns)", "Consumption (μJ), File"])
+                    csv_writer.writerow(["Module", "Function", "Parameter", "Runtime (s)", "Samples", "Sample frequency (ns)", "Consumption (μJ)", "File"])
                     csv_writer.writerow([module, function, parameter, runtime, number_samples, nano, final_consumption, file_name])
             else:
                 if verbose:

@@ -2,27 +2,30 @@
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 <number-of-clients> <ping-count> <delay-ms> [--no-server]"
+    echo "Usage: $0 <path-to-kubeconfig> <number-of-clients> <ping-count> <delay-ms> [--no-server]"
     echo "  --no-server: Skip deploying the server (use if server is already running)"
     exit 1
 }
 
 # Check if the correct number of arguments is provided
-if [ "$#" -lt 3 ]; then
+if [ "$#" -lt 4 ]; then
     usage
 fi
+
+# Export KUBECONFIG
+export KUBECONFIG=$1
 
 # Get the directory of the current script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Get script arguments
-CLIENT_COUNT=$1
-PING_COUNT=$2
-DELAY_MS=$3
+CLIENT_COUNT=$2
+PING_COUNT=$3
+DELAY_MS=$4
 NO_SERVER=false
 
 # Check if the optional '--no-server' argument is provided
-if [ "$4" == "--no-server" ]; then
+if [ "$5" == "--no-server" ]; then
     NO_SERVER=true
 fi
 
@@ -109,3 +112,4 @@ if [ "$NO_SERVER" = false ]; then
 fi
 
 echo "Cleanup completed. Script finished."
+exit 0

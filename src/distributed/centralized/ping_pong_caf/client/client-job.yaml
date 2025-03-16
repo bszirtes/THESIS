@@ -4,8 +4,8 @@ metadata:
   name: caf-client
   namespace: ping-pong
 spec:
-  completions: 8  # Set number of clients to run
-  parallelism: 8  # Set number of clients to run
+  completions: 16  # Set number of clients to run
+  parallelism: 16  # Set number of clients to run
   template:
     metadata:
       labels:
@@ -18,5 +18,5 @@ spec:
           command: ["/app/ping_pong_client"]
           args:
             - "--server=caf-server"
-            - "--pings=40"
-            - "--delay=1000"
+            - "--pings=80"
+            - "--delay=500"

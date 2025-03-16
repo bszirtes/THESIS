@@ -1,0 +1,41 @@
+Module,Function,Parameter,Runtime (s),Samples,Sample frequency (ns),"Consumption (μJ), File"
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,56.03797919400313,539,1000000,9243117.173422845,deploy_ping_pong____2025-03-16-16-36-52
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,56.567428174999804,549,1000000,9489127.500938898,deploy_ping_pong____2025-03-16-16-37-59
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,55.94381358999817,543,1000000,9053107.611947568,deploy_ping_pong____2025-03-16-16-39-05
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,73.54541068899925,698,1000000,12034594.616805209,deploy_ping_pong____2025-03-16-16-40-12
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,56.3102378170006,538,1000000,9324934.287116276,deploy_ping_pong____2025-03-16-16-41-35
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,56.88869205800074,545,1000000,9153241.519416565,deploy_ping_pong____2025-03-16-16-42-42
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,56.40968581300331,544,1000000,9440307.699223373,deploy_ping_pong____2025-03-16-16-43-49
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,55.954297505002614,539,1000000,9095925.002208166,deploy_ping_pong____2025-03-16-16-44-55
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,55.962611909999396,536,1000000,9221103.242047789,deploy_ping_pong____2025-03-16-16-46-01
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500,51.01649012599955,496,1000000,9180665.502679262,deploy_ping_pong____2025-03-16-16-47-08
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.649994458999572,153,1000000,3184355.2054771646,deploy_ping_pong____2025-03-16-16-55-34
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.398734785998386,151,1000000,3129851.3326039053,deploy_ping_pong____2025-03-16-16-55-57
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.567931167002826,149,1000000,2999036.699984147,deploy_ping_pong____2025-03-16-16-56-19
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.371968519997608,145,1000000,3062402.096794001,deploy_ping_pong____2025-03-16-16-56-42
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.548920134999207,151,1000000,2856947.166371375,deploy_ping_pong____2025-03-16-16-57-04
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.409888239999418,148,1000000,3095736.3830279964,deploy_ping_pong____2025-03-16-16-57-27
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.523850475998188,148,1000000,3376881.6846687407,deploy_ping_pong____2025-03-16-16-57-49
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.408078251999541,146,1000000,3029563.4486693516,deploy_ping_pong____2025-03-16-16-58-12
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.582743547998689,153,1000000,2988329.6000301577,deploy_ping_pong____2025-03-16-16-58-34
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 500 --no-server,12.39984265000021,146,1000000,3193400.83235255,deploy_ping_pong____2025-03-16-16-58-57
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,22.93152101400119,265,1000000,6967352.052969111,deploy_ping_pong____2025-03-16-18-15-08
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,22.944281044998206,259,1000000,7065297.604720872,deploy_ping_pong____2025-03-16-18-15-41
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,22.399233981999714,253,1000000,6596583.061859849,deploy_ping_pong____2025-03-16-18-16-14
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,22.540612035001686,234,1000000,7057946.609660349,deploy_ping_pong____2025-03-16-18-16-46
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,22.435522572999616,257,1000000,6586618.428645258,deploy_ping_pong____2025-03-16-18-17-19
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,22.474536778001493,253,1000000,6881731.952193993,deploy_ping_pong____2025-03-16-18-17-52
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,22.453063305998512,243,1000000,6696903.254852547,deploy_ping_pong____2025-03-16-18-18-24
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,22.474535807999928,251,1000000,6058507.1176666785,deploy_ping_pong____2025-03-16-18-18-57
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,22.452544077998027,249,1000000,6017562.673941461,deploy_ping_pong____2025-03-16-18-19-29
+deploy_ping_pong,,/home/eszibot/.kube/config 8 40 500 --no-server,23.32069672000216,260,1000000,6111817.265582153,deploy_ping_pong____2025-03-16-18-20-02
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.26225251700089,320,1000000,13144120.835950343,deploy_ping_pong____2025-03-16-18-21-14
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.251394251998136,306,1000000,17422243.951297957,deploy_ping_pong____2025-03-16-18-21-54
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.243857063996984,312,1000000,15834511.430207875,deploy_ping_pong____2025-03-16-18-22-35
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.309876360002818,311,1000000,15886171.380220713,deploy_ping_pong____2025-03-16-18-23-15
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.265410759999213,311,1000000,16226938.320511758,deploy_ping_pong____2025-03-16-18-23-55
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.24357430100281,318,1000000,17152666.094388515,deploy_ping_pong____2025-03-16-18-24-36
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.279757486001472,300,1000000,16440751.515723916,deploy_ping_pong____2025-03-16-18-25-16
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.2763694690002,311,1000000,17928297.297264885,deploy_ping_pong____2025-03-16-18-25-57
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.264048607001314,312,1000000,16943428.38133863,deploy_ping_pong____2025-03-16-18-26-37
+deploy_ping_pong,,/home/eszibot/.kube/config 16 80 500 --no-server,30.24155919899931,312,1000000,16005110.813244008,deploy_ping_pong____2025-03-16-18-27-18

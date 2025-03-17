@@ -24,7 +24,7 @@ main(Args) ->
             io:format("Error: ~s~nUsage: main <num_workers> <num_clients> <num_messages> [verbose]~n", [Msg])
     end.
 
-% Initializes the system: spawns workers, clients, load balancer, and watcher
+% Initializes the system: spawns workers, clients and load balancer
 start(NumWorkers, NumClients, NumMessages, Verbose) ->
     Main = self(), % Store reference to the main process
 
@@ -43,6 +43,7 @@ start(NumWorkers, NumClients, NumMessages, Verbose) ->
     % Wait for all clients and workers to finish
     wait_for_processes(NumWorkers, NumClients),
 
+    io:format("Terminating.~n"),
     halt(0). % Shutdown the system
 
 % Parses command-line arguments and converts them to integers
@@ -66,7 +67,7 @@ client(Balancer, NumMessages, Main, true) -> % Verbose mode enabled
         end
     end, lists:seq(1, NumMessages)),
     io:format("Client ~p reached max pings, terminating.~n", [self()]),
-    Main ! {client, self(), done}; % Notify watcher that client is done
+    Main ! {client, self(), done}; % Notify the main process that client is done
 client(Balancer, NumMessages, Main, false) -> % Silent mode
     lists:foreach(fun(_) -> Balancer ! {self(), ping} end, lists:seq(1, NumMessages)), % Send pings
     lists:foreach(fun(_) ->
@@ -74,7 +75,7 @@ client(Balancer, NumMessages, Main, false) -> % Silent mode
             pong -> pong % Discard received message
         end
     end, lists:seq(1, NumMessages)),
-    Main ! {client, self(), done}. % Notify watcher
+    Main ! {client, self(), done}. % Notify the main process
 
 % Worker process: Handles ping messages and responds with pong
 worker(Main, true) -> % Verbose mode enabled
@@ -85,7 +86,7 @@ worker(Main, true) -> % Verbose mode enabled
             worker(Main, true); % Recursively wait for more messages
         stop ->
             io:format("Worker ~p terminated.~n", [self()]),
-            Main ! {worker, self(), done} % Notify watcher
+            Main ! {worker, self(), done} % Notify the main process
     end;
 worker(Main, false) -> % Silent mode
     receive
@@ -93,7 +94,7 @@ worker(Main, false) -> % Silent mode
             From ! pong, % Respond with pong
             worker(Main, false); % Recursively wait for more messages
         stop ->
-            Main ! {worker, self(), done} % Notify watcher
+            Main ! {worker, self(), done} % Notify the main process
     end.
 
 % Load balancer: Distributes messages among workers using round-robin

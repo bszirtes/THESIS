@@ -1,4 +1,7 @@
-%% Module for calculating prime numbers in a given range
+%% prime_calculation.erl
+%%
+%% Module for calculating prime numbers in a given range.
+
 -module(prime_calculation).
 -export([main/1]).
 
@@ -7,7 +10,7 @@ is_prime(N) when N < 2 -> false;  % Numbers less than 2 are not prime
 is_prime(2) -> true;              % 2 is the only even prime number
 is_prime(N) ->
     Max = trunc(math:sqrt(N)),    % Determine upper limit for divisibility check
-    not lists:any(fun(X) -> N rem X =:= 0 end, lists:seq(2, Max)).  
+    not lists:any(fun(X) -> N rem X =:= 0 end, lists:seq(2, Max)).
     % Check if any number from 2 to Max divides N without remainder
 
 %% Function to count prime numbers up to a given limit

@@ -1,10 +1,10 @@
 /*
  * ping_pong_lb.cpp
  *
- * This module implements a distributed message-passing system using the Actor
- * model in the CAF framework. It simulates clients sending messages (pings) to
- * workers through a load balancer. Workers process messages and respond with
- * pongs. The main process ensures orderly termination.
+ * This source file implements a distributed message-passing system using the
+ * Actor model in the CAF framework. It simulates clients sending messages
+ * (pings) to workers through a load balancer. Workers process messages and
+ * respond with pongs. The main process ensures orderly termination.
  *
  * Parameters:
  * - num_orkers: Number of worker processes.

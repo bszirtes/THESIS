@@ -1,3 +1,9 @@
+/*
+ * prime_calculation.cpp
+ *
+ * Source file for calculating prime numbers in a given range.
+ */
+
 #include <caf/all.hpp>
 #include <chrono>
 #include <cmath>
@@ -71,4 +77,3 @@ int main(int argc, char **argv) {
 
   return 0; // Exit successfully
 }
-

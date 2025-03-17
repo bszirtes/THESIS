@@ -6,7 +6,7 @@ deploy(Args) ->
         {ok, Nodes, NumClients, PingCount, DelayMs, NoServer, Verbose} ->
             launch_deployment(Nodes, NumClients, PingCount, DelayMs, NoServer, Verbose);
         {error, Msg} ->
-            io:format("Error: ~s~nUsage: deploy \"[node1@host, node2@host, ...]\" <num_clients> <ping_count> <delay_ms> [--no-server]~n", [Msg])
+            io:format("Error: ~s~nUsage: deploy \"[node1@host, node2@host, ...]\" <num_clients> <ping_count> <delay_ms> [no-server] [verbose]~n", [Msg])
     end.
 
 parse_args([NodesStr, NumClientsStr, PingCountStr, DelayMsStr | Rest]) ->

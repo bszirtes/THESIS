@@ -25,7 +25,7 @@ main(Args) ->
     Start = erlang:monotonic_time(),    % Get start time in native units
     Count = find_primes(Range),         % Count prime numbers in the given range
     End = erlang:monotonic_time(),      % Get end time
-    Elapsed = erlang:convert_time_unit(End - Start, native, second),  
+    Elapsed = erlang:convert_time_unit(End - Start, native, second),
     % Convert elapsed time to seconds
 
     %% Print the results

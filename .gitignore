@@ -2,7 +2,7 @@
 *.cmake
 *.out
 test.csv
-measurements/
+temp/
 CMakeFiles/
 CMakeCache.txt
 Makefile

@@ -131,7 +131,7 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
                     cmdline = consumer.get("cmdline", "")
                     consumption = consumer.get("consumption", 0.0)
 
-                    if (("scaphandre" not in exe and "dash" not in exe)): # and consumption > 0.0):
+                    if (("scaphandre" not in exe and "dash" not in exe) and consumption > 0.0):
                         if verbose:
                             print(f"[DEBUG] Matching process found: '{exe}', cmdline: '{cmdline}', adding consumption: {consumption}")
                         total_consumption += consumption
@@ -150,19 +150,20 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
 
             # Write results to the CSV file
             output_file = result_file if result_file else f"{program_exe}_{module}"
+            if nano == 0: nano = 1000000000
             if not os.path.exists(f"{output_file}.csv"):
                 if verbose:
                     print(f"[DEBUG] Output file '{output_file}' created")
                 with open(f"{output_file}.csv", 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file, delimiter=',')
-                    csv_writer.writerow(["Module", "Function", "Parameter", "Runtime (s)", "Samples", "Sample frequency (ns)", "Consumption (μJ)", "File"])
-                    csv_writer.writerow([module, function, parameter, runtime, number_samples, nano, final_consumption, file_name])
+                    csv_writer.writerow(["Module", "Function", "Parameter", "Runtime (s)", "Samples", "Average (μW)", "Consumption (μJ)", "Sample frequency (ns)", "File"])
+                    csv_writer.writerow([module, function, parameter, runtime, number_samples, average_energy, final_consumption, nano, file_name])
             else:
                 if verbose:
                     print(f"[DEBUG] Output file '{output_file}' exists")
                 with open(f"{output_file}.csv", 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file, delimiter=',')
-                    csv_writer.writerow([module, function, parameter, runtime, number_samples, nano, final_consumption, file_name])
+                    csv_writer.writerow([module, function, parameter, runtime, number_samples, average_energy, final_consumption, nano, file_name])
 
             print(f"[INFO] Results saved to {output_file}.csv")
             print("------------------------------")

@@ -74,7 +74,7 @@ def measure_energy_consumption(module, function, parameters, rep, nano, folder_n
 
             # Compile if necessary and prepare the execution command
             if not measure_cmd:
-                if not container:
+                if not container and i == 0:
                     compile_program(program_exe, module)
                 command = run_program(module, function, parameter, program_exe, container, i)
             else:

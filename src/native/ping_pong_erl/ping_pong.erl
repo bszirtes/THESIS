@@ -1,15 +1,15 @@
 %% ping_pong.erl
 %%
 %% This module implements a distributed message-passing system using the Actor model in Erlang.
-%% It simulates clients sending messages (pings) to the server, which processes messages 
-%% and respond with pongs. The main process ensures orderly termination.
+%% It simulates clients sending messages (pings) to the server, which processes messages
+%% and responds with pongs. The main process ensures orderly termination.
 %%
 %% Parameters:
 %% - NumClients: Number of client processes.
 %% - NumMessages: Number of messages each client sends.
-%% - verbose: Verbose mode for debugging
+%% - verbose: Verbose mode for debugging.
 %%
-%% The system terminates when all clients and servers finish processing.
+%% The system terminates when all clients and the server finish processing.
 
 -module(ping_pong).
 -export([main/1]).

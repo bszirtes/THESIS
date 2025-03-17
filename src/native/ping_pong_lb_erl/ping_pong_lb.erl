@@ -8,7 +8,7 @@
 %% - NumWorkers: Number of worker processes.
 %% - NumClients: Number of client processes.
 %% - NumMessages: Number of messages each client sends.
-%% - verbose: Verbose mode for debugging
+%% - verbose: Verbose mode for debugging.
 %%
 %% The system terminates when all clients and workers finish processing.
 

@@ -1,44 +1,55 @@
+%% ping_pong_lb.erl
+%%
+%% This module implements a distributed message-passing system using the Actor model in Erlang.
+%% It simulates clients sending messages (pings) to workers through a load balancer.
+%% Workers process messages and respond with pongs. The main process ensures orderly termination.
+%%
+%% Parameters:
+%% - NumWorkers: Number of worker processes.
+%% - NumClients: Number of client processes.
+%% - NumMessages: Number of messages each client sends.
+%% - verbose: Verbose mode for debugging
+%%
+%% The system terminates when all clients and workers finish processing.
+
 -module(ping_pong_lb).
 -export([main/1]).
 
+% Entry point of the program
 main(Args) ->
     case parse_args(Args) of
         {ok, NumWorkers, NumClients, NumMessages, Verbose} ->
-            start(NumWorkers, NumClients, NumMessages, Verbose);
+            start(NumWorkers, NumClients, NumMessages, Verbose); % Start the system with parsed parameters
         {error, Msg} ->
             io:format("Error: ~s~nUsage: main <num_workers> <num_clients> <num_messages> [verbose]~n", [Msg])
     end.
 
+% Initializes the system: spawns workers, clients, load balancer, and watcher
 start(NumWorkers, NumClients, NumMessages, Verbose) ->
-    Main = self(),
+    Main = self(), % Store reference to the main process
 
-    % Spawn watcher
-    io:format("Starting watcher...~n"),
-    Watcher = spawn(fun() -> watcher(Main, NumWorkers, NumClients) end),
-
-    % Spawn workers
+    % Spawn worker processes
     io:format("Starting ~p workers...~n", [NumWorkers]),
-    Workers = [spawn(fun() -> worker(Watcher, Verbose) end) || _ <- lists:seq(1, NumWorkers)],
+    Workers = [spawn(fun() -> worker(Main, Verbose) end) || _ <- lists:seq(1, NumWorkers)],
 
-    % Spawn the load balancer
+    % Spawn load balancer to distribute tasks among workers
     io:format("Starting load balancer...~n"),
     Balancer = spawn(fun() -> load_balancer(Workers, NumClients, NumMessages) end),
 
-    % Spawn clients
+    % Spawn client processes
     io:format("Starting ~p clients to send ~p messages each...~n", [NumClients, NumMessages]),
-    [spawn(fun() -> client(Balancer, NumMessages, Watcher, Verbose) end) || _ <- lists:seq(1, NumClients)],
+    [spawn(fun() -> client(Balancer, NumMessages, Main, Verbose) end) || _ <- lists:seq(1, NumClients)],
 
     % Wait for all clients and workers to finish
-    receive
-        done ->
-            io:format("Terminating.~n")
-    end,
-    halt(0).
+    wait_for_processes(NumWorkers, NumClients),
 
+    halt(0). % Shutdown the system
+
+% Parses command-line arguments and converts them to integers
 parse_args([NumWorkersStr, NumClientsStr, NumMessagesStr | Rest]) ->
     case {string:to_integer(NumWorkersStr), string:to_integer(NumClientsStr), string:to_integer(NumMessagesStr)} of
         {{IntWorkers, _}, {IntClients, _}, {IntMessages, _}} ->
-            Verbose = lists:member("verbose", Rest),
+            Verbose = lists:member("verbose", Rest), % Check for verbosity flag
             {ok, IntWorkers, IntClients, IntMessages, Verbose};
         _ ->
             {error, "Invalid arguments."}
@@ -46,70 +57,73 @@ parse_args([NumWorkersStr, NumClientsStr, NumMessagesStr | Rest]) ->
 parse_args(_) ->
     {error, "Invalid number of arguments."}.
 
-client(Balancer, NumMessages, Main, true) ->
-    lists:foreach(fun(_) -> Balancer ! {self(), ping} end, lists:seq(1, NumMessages)),
+% Client process: Sends messages to the balancer and waits for responses
+client(Balancer, NumMessages, Main, true) -> % Verbose mode enabled
+    lists:foreach(fun(_) -> Balancer ! {self(), ping} end, lists:seq(1, NumMessages)), % Send pings
     lists:foreach(fun(_) ->
         receive
-            pong ->
-                io:format("Client ~p received: pong~n", [self()])
+            pong -> io:format("Client ~p received: pong~n", [self()])
         end
     end, lists:seq(1, NumMessages)),
     io:format("Client ~p reached max pings, terminating.~n", [self()]),
-    Main ! {client, self(), done};
-client(Balancer, NumMessages, Main, false) ->
-    lists:foreach(fun(_) -> Balancer ! {self(), ping} end, lists:seq(1, NumMessages)),
+    Main ! {client, self(), done}; % Notify watcher that client is done
+client(Balancer, NumMessages, Main, false) -> % Silent mode
+    lists:foreach(fun(_) -> Balancer ! {self(), ping} end, lists:seq(1, NumMessages)), % Send pings
     lists:foreach(fun(_) ->
         receive
-            pong -> pong
+            pong -> pong % Discard received message
         end
     end, lists:seq(1, NumMessages)),
-    Main ! {client, self(), done}.
+    Main ! {client, self(), done}. % Notify watcher
 
-worker(Main, true) ->
+% Worker process: Handles ping messages and responds with pong
+worker(Main, true) -> % Verbose mode enabled
     receive
         {From, ping} ->
             io:format("Worker ~p received: ping~n", [self()]),
-            From ! pong,
-            worker(Main, true);
+            From ! pong, % Respond with pong
+            worker(Main, true); % Recursively wait for more messages
         stop ->
             io:format("Worker ~p terminated.~n", [self()]),
-            Main ! {worker, self(), done}
+            Main ! {worker, self(), done} % Notify watcher
     end;
-worker(Main, false) ->
+worker(Main, false) -> % Silent mode
     receive
         {From, ping} ->
-            From ! pong,
-            worker(Main, false);
+            From ! pong, % Respond with pong
+            worker(Main, false); % Recursively wait for more messages
         stop ->
-            Main ! {worker, self(), done}
+            Main ! {worker, self(), done} % Notify watcher
     end.
 
+% Load balancer: Distributes messages among workers using round-robin
 load_balancer(Workers, NumClients, NumMessages) ->
     loop(Workers, 0, NumClients, NumMessages).
 
+% Core loop of the load balancer
 loop(Workers, Index, NumClients, NumMessages) ->
-    case Index >= (NumClients * NumMessages) of
+    case Index >= (NumClients * NumMessages) of % Check if all messages are processed
         true ->
             io:format("Load balancer ~p finished, stopping all workers.~n", [self()]),
-            lists:foreach(fun(Worker) -> Worker ! stop end, Workers);
+            lists:foreach(fun(Worker) -> Worker ! stop end, Workers); % Stop workers
         _ ->
             receive
                 {From, Msg} ->
-                    % Route the message to a worker in round-robin fashion
+                    % Select a worker using round-robin scheduling
                     Worker = lists:nth((Index rem length(Workers)) + 1, Workers),
-                    Worker ! {From, Msg},
-                    loop(Workers, (Index + 1), NumClients, NumMessages)
+                    Worker ! {From, Msg}, % Forward message to worker
+                    loop(Workers, (Index + 1), NumClients, NumMessages) % Continue loop
             end
     end.
 
-watcher(Main, 0, 0) ->
-    io:format("All clients and workers finished.~n"),
-    Main ! done;
-watcher(Main, NumWorkers, NumClients) ->
+% Waiting loop for all workers and clients to signal completion
+wait_for_processes(0, 0) -> % Terminate when all workers and clients are done
+    io:format("All clients and workers finished.~n");
+wait_for_processes(NumWorkers, NumClients) ->
     receive
-        {worker, _Pid, done} -> 
-            watcher(Main, NumWorkers - 1, NumClients);
+        {worker, _Pid, done} ->
+            wait_for_processes (NumWorkers - 1, NumClients); % Decrement worker count
         {client, _Pid, done} ->
-            watcher(Main, NumWorkers, NumClients - 1)
+            wait_for_processes (NumWorkers, NumClients - 1) % Decrement client count
     end.
 

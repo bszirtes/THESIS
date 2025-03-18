@@ -1,0 +1,21 @@
+Module,Function,Parameter,Runtime (s),Samples,Average (μW),Consumption (μJ),Sample frequency (ns),File
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,25.65339232599996,266,694121.1413195446,17806561.96004114,1000000,deploy_ping_pong____2025-03-18-08-16-50
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,22.96010600799997,227,213079.3394845811,4892324.222680596,1000000,deploy_ping_pong____2025-03-18-08-17-25
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,22.953518554000027,237,221486.3756919828,5083891.633904148,1000000,deploy_ping_pong____2025-03-18-08-17-59
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,21.99562782399994,226,228252.8379026554,5020564.472278595,1000000,deploy_ping_pong____2025-03-18-08-18-32
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,23.000199331999966,232,226468.32646551728,5208816.651091341,1000000,deploy_ping_pong____2025-03-18-08-19-04
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,22.977351548,236,198828.23221186458,4568546.189199391,1000000,deploy_ping_pong____2025-03-18-08-19-37
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,22.985524624999925,234,207503.34391025602,4769573.221219018,1000000,deploy_ping_pong____2025-03-18-08-20-10
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,22.99130826599992,231,207959.24213852832,4781255.042770625,1000000,deploy_ping_pong____2025-03-18-08-20-43
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,22.99506628000006,246,191496.2505487805,4403468.973740705,1000000,deploy_ping_pong____2025-03-18-08-21-16
+deploy_ping_pong,,/home/eszibot/.kube/config 4 20 1000 --no-server,21.961817515000007,238,217235.4085126051,4770884.399550312,1000000,deploy_ping_pong____2025-03-18-08-21-49
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.36224459999994,229,23542504.902606968,714803292.3496505,1000000,deploy_ping_pong____2025-03-18-08-22-21
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.364258507000045,186,29263082.902128913,888551813.9520154,1000000,deploy_ping_pong____2025-03-18-08-23-02
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.36700732199995,183,26228269.451448232,796474050.4755161,1000000,deploy_ping_pong____2025-03-18-08-23-42
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.404719361999923,170,31949067.24884122,971402423.5786803,1000000,deploy_ping_pong____2025-03-18-08-24-23
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.399810624999986,171,30177605.721210573,917393499.0407176,1000000,deploy_ping_pong____2025-03-18-08-25-03
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.34773932600001,176,28391736.14600024,861625007.5713874,1000000,deploy_ping_pong____2025-03-18-08-25-44
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.363157652999917,179,27491335.8716315,834723765.1619191,1000000,deploy_ping_pong____2025-03-18-08-26-24
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.35912840700007,182,27391604.57087911,831585240.4410889,1000000,deploy_ping_pong____2025-03-18-08-27-05
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.38820982900006,178,28731018.84243835,873084229.1849711,1000000,deploy_ping_pong____2025-03-18-08-27-45
+deploy_ping_pong,,/home/eszibot/.kube/config 20 100000 0 --no-server,30.372398860999965,178,28782784.752027806,874202218.8188965,1000000,deploy_ping_pong____2025-03-18-08-28-26

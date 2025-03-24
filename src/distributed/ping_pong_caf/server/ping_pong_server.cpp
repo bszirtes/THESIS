@@ -28,14 +28,13 @@ void caf_main(actor_system &sys, const config &cfg) {
   // Read parameters from the config
   int port = cfg.port;
 
-  std::cout << "Starting server on port " << port << " " << std::endl;
+  std::cout << "Starting server on port " << port << std::endl;
 
   // Spawn the server actor
   auto server = sys.spawn(ping_pong_server);
 
   // Publish the server actor on the given port
   auto res = sys.middleman().publish(server, port, nullptr);
-
   if (!res) {
     std::cerr << "Failed to publish server: " << to_string(res.error())
               << std::endl;

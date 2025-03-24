@@ -1,4 +1,3 @@
-# Dockerfile.client
 FROM ubuntu:22.04
 
 # Install dependencies
@@ -11,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy the client binary (assuming it's already compiled)
+# Copy the client binary
 COPY ping_pong_client.out /app/ping_pong_client
 
 # Define the default command

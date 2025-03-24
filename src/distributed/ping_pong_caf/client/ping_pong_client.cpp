@@ -69,7 +69,7 @@ void caf_main(actor_system &sys, const config &cfg) {
     return;
   }
 
-  // Start client actor with delay
+  // Start client actor
   sys.spawn(ping_actor, *server, max_pings, delay_ms);
 }
 

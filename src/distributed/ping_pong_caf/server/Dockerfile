@@ -18,4 +18,4 @@ COPY ping_pong_server.out /app/ping_pong_server
 EXPOSE 4242
 
 # Define the default command
-CMD ["/app/ping_pong_server", "--port=4242", "--max-conns=50"]
+CMD ["/app/ping_pong_server", "--port=4242"]

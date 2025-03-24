@@ -15,11 +15,10 @@ spec:
     spec:
       containers:
         - name: caf-server
-          image: localhost:5001/ping-pong-server:v1
+          image: localhost:5001/ping-pong-server:v2
           command: ["/app/ping_pong_server"]
           args:
             - "--port=4242"
-            - "--max-conns=50"
           ports:
             - containerPort: 4242
 ---

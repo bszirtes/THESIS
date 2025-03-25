@@ -35,8 +35,8 @@ def process_csv(file_path, output_path, num_trials=10):
         group = group.dropna(subset=['Average (μW)'])
 
         if len(group) > num_trials:
-            # Select the 'num_trials' trials closest to the median 'Average (μW)'
-            diff = (group['Average (μW)'] - group['Average (μW)'].median()).abs()
+            # Select the 'num_trials' trials closest to the median 'Consumption (μJ)'
+            diff = (group['Consumption (μJ)'] - group['Consumption (μJ)'].median()).abs()
             best_indices = diff.nsmallest(num_trials).index
             group = group.loc[best_indices]
         elif len(group) > 0:

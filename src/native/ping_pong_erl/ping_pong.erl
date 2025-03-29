@@ -12,9 +12,12 @@
 %% The system terminates when all clients and the server finish processing.
 
 -module(ping_pong).
--export([main/1]).
+-export([main/0, main/1]).
 
 % Entry point of the program
+main() ->
+    start(4, 10, false).
+
 main(Args) ->
     case parse_args(Args) of
         {ok, NumClients, NumMessages, Verbose} ->
@@ -36,7 +39,7 @@ start(NumClients, NumMessages, Verbose) ->
     [spawn(fun() -> client(Server, NumMessages, Main, Verbose) end) || _ <- lists:seq(1, NumClients)],
 
     % Wait for all clients and the server to finish
-    wait_for_processes(Server, NumClients),
+    wait_for_processes(Server, NumClients, Verbose),
 
     io:format("Terminating.~n"),
     halt(0). % Shutdown the system
@@ -54,25 +57,32 @@ parse_args(_) ->
     {error, "Invalid number of arguments."}.
 
 % Client process: Sends messages to the server and waits for responses
-client(Balancer, NumMessages, Main, true) -> % Verbose mode enabled
-    lists:foreach(fun(_) -> Balancer ! {self(), ping} end, lists:seq(1, NumMessages)), % Send pings
-    lists:foreach(fun(_) ->
-        receive
-            pong -> io:format("Client ~p received: pong~n", [self()])
-        end
-    end, lists:seq(1, NumMessages)),
+client(_, 0, Main, true) ->
     io:format("Client ~p reached max pings, terminating.~n", [self()]),
     Main ! {client, self(), done}; % Notify the main process that client is done
-client(Balancer, NumMessages, Main, false) -> % Silent mode
-    lists:foreach(fun(_) -> Balancer ! {self(), ping} end, lists:seq(1, NumMessages)), % Send pings
-    lists:foreach(fun(_) ->
-        receive
-            pong -> pong % Discard received message
-        end
-    end, lists:seq(1, NumMessages)),
-    Main ! {client, self(), done}. % Notify the main process
+client(_, 0, Main, false) ->
+    Main ! {client, self(), done}; % Notify the main process that client is done
+client(Server, NumMessages, Main, true) -> % Verbose mode
+    % Send a ping to the server
+    Server ! {self(), ping},
 
-% Server process: Handles ping messages and responds with pong
+    % Wait for a pong message
+    receive
+        pong ->
+            io:format("Client ~p received: pong~n", [self()]),
+            client(Server, NumMessages - 1, Main, true) % Recursively send more messages
+    end;
+client(Server, NumMessages, Main, false) -> % Silent mode
+    % Send a ping to the server
+    Server ! {self(), ping},
+
+    % Wait for a pong message
+    receive
+        pong ->
+            client(Server, NumMessages - 1, Main, false) % Recursively send more messages
+    end.
+
+% Server process: Handles ping messages and responds with pong messages
 server(Main, true) -> % Verbose mode enabled
     receive
         {From, ping} ->
@@ -80,7 +90,7 @@ server(Main, true) -> % Verbose mode enabled
             From ! pong, % Respond with pong
             server(Main, true); % Recursively wait for more messages
         stop ->
-            io:format("Server ~p terminated.~n", [self()]),
+            io:format("Server ~p terminating.~n", [self()]),
             Main ! {server, self(), done} % Notify the main process
     end;
 server(Main, false) -> % Silent mode
@@ -93,16 +103,28 @@ server(Main, false) -> % Silent mode
     end.
 
 % Waiting loop for all clients to signal completion
-wait_for_processes(Server, 0) -> % Terminate when all servers and clients are done
+wait_for_processes(Server, 0, true) -> % Terminate server when clients are done
     io:format("All clients finished, terminating server.~n"),
     Server ! stop,
     receive
-        {server, _Pid, done} ->
-            io:format("Server finished.~n")
+        {server, Pid, done} ->
+            io:format("Server ~p finished.~n", [Pid])
     end;
-wait_for_processes(Server, NumClients) ->
+wait_for_processes(Server, 0, false) -> % Terminate server when clients are done
+    io:format("All clients finished, terminating server.~n"),
+    Server ! stop,
+    receive
+        {server, _Pid, done} -> done
+    end;
+wait_for_processes(Server, NumClients, true) ->
+    receive
+        {client, Pid, done} ->
+            io:format("Client ~p finished.~n", [Pid]),
+            wait_for_processes(Server, NumClients - 1, true) % Decrement client count
+    end;
+wait_for_processes(Server, NumClients, false) ->
     receive
         {client, _Pid, done} ->
-            wait_for_processes (Server, NumClients - 1) % Decrement client count
+            wait_for_processes(Server, NumClients - 1, false) % Decrement client count
     end.
 

@@ -6,3 +6,4 @@ temp/
 CMakeFiles/
 CMakeCache.txt
 Makefile
+erl_crash.dump

@@ -102,7 +102,7 @@ server(Main, false) -> % Silent mode
             Main ! {server, self(), done} % Notify the main process
     end.
 
-% Waiting loop for all clients to signal completion
+% Waiting loop for all clients and the server to signal completion
 wait_for_processes(Server, 0, true) -> % Terminate server when clients are done
     io:format("All clients finished, terminating server.~n"),
     Server ! stop,

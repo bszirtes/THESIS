@@ -49,7 +49,7 @@ start(NumServers, NumClients, NumMessages, Verbose) ->
     io:format("Terminating.~n"),
     halt(0). % Shutdown the system
 
-% Parses command-line arguments and converts them to integers
+% Parses command-line arguments and converts them
 parse_args([NumServersStr, NumClientsStr, NumMessagesStr | Rest]) ->
     case {string:to_integer(NumServersStr), string:to_integer(NumClientsStr), string:to_integer(NumMessagesStr)} of
         {{IntServer, _}, {IntClients, _}, {IntMessages, _}} ->

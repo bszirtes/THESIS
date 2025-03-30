@@ -44,7 +44,7 @@ start(NumClients, NumMessages, Verbose) ->
     io:format("Terminating.~n"),
     halt(0). % Shutdown the system
 
-% Parses command-line arguments and converts them to integers
+% Parses command-line arguments and converts them
 parse_args([NumClientsStr, NumMessagesStr | Rest]) ->
     case {string:to_integer(NumClientsStr), string:to_integer(NumMessagesStr)} of
         {{IntClients, _}, {IntMessages, _}} ->

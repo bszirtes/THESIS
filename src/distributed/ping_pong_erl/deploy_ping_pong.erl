@@ -1,17 +1,17 @@
 -module(deploy_ping_pong).
--export([deploy/1]).
+-export([main/1]).
 
-deploy(Args) ->
+main(Args) ->
     case parse_args(Args) of
-        {ok, Nodes, NumClients, PingCount, DelayMs, NoServer, Verbose} ->
-            launch_deployment(Nodes, NumClients, PingCount, DelayMs, NoServer, Verbose);
+        {ok, Nodes, NumClients, NumMessages, DelayMs, NoServer, Verbose} ->
+            launch_deployment(Nodes, NumClients, NumMessages, DelayMs, NoServer, Verbose);
         {error, Msg} ->
             io:format("Error: ~s~nUsage: deploy \"[node1@host, node2@host, ...]\" <num_clients> <ping_count> <delay_ms> [no-server] [verbose]~n", [Msg])
     end.
 
-parse_args([NodesStr, NumClientsStr, PingCountStr, DelayMsStr | Rest]) ->
+parse_args([NodesStr, NumClientsStr, NumMessagesStr, DelayMsStr | Rest]) ->
     Nodes = parse_nodes(NodesStr),
-    case {string:to_integer(NumClientsStr), string:to_integer(PingCountStr), string:to_integer(DelayMsStr)} of
+    case {string:to_integer(NumClientsStr), string:to_integer(NumMessagesStr), string:to_integer(DelayMsStr)} of
         {{IntClients, _}, {IntPings, _}, {IntDelay, _}} ->
             NoServer = lists:member("no-server", Rest),
             Verbose = lists:member("verbose", Rest),
@@ -27,42 +27,65 @@ parse_nodes(NodesStr) ->
     Parts = string:split(Stripped, ",", all),
     [list_to_atom(string:trim(P)) || P <- Parts].
 
-launch_deployment(Nodes, NumClients, PingCount, DelayMs, NoServer, Verbose) ->
+launch_deployment(Nodes, NumClients, NumMessages, DelayMs, NoServer, Verbose) ->
+    Main = self(), % Store reference to the main process
     ServerNode = hd(Nodes),
-    start_server(ServerNode, NoServer, Verbose),
-    distribute_clients(Nodes, NumClients, PingCount, DelayMs, Verbose, ServerNode),
-    io:format("All clients finished, terminating.~n"),
-    stop_server(NoServer),
+    start_server(ServerNode, NoServer, Main, Verbose),
+    distribute_clients(Nodes, NumClients, NumMessages, DelayMs, Main, Verbose),
+    io:format("All clients finished, terminating server.~n"),
+    stop_server(NoServer, Verbose),
+    io:format("Terminating.~n"),
     halt(0).
 
-start_server(_, true, _) ->
+start_server(_, true, _, _) ->
     io:format("Skipping server start as \"no-server\" was provided.~n");
-start_server(ServerNode, false, Verbose) ->
+start_server(ServerNode, false, Main, Verbose) ->
     io:format("Starting server on node '~p'...~n", [ServerNode]),
-    spawn(ServerNode, fun() -> ping_pong_server:start(Verbose) end).
+    spawn(ServerNode, fun() -> ping_pong_server:start(Main, Verbose) end).
 
-stop_server(true) ->
+stop_server(true, _) ->
     io:format("Skipping server stop as \"no-server\" was provided.~n");
-stop_server(_) ->
-    io:format("Stopping server...~n"),
-    global:send(ping_pong_server, stop).
+stop_server(false, true) ->
+    timer:sleep(200),
+    global:send(ping_pong_server, stop),
+    receive
+        {server, Pid, done} ->
+            io:format("Server ~p finished.~n", [Pid])
+    end;
+stop_server(false, false) ->
+    timer:sleep(200),
+    global:send(ping_pong_server, stop),
+    receive
+        {server, _Pid, done} -> done
+    end.
 
-distribute_clients(Nodes, NumClients, PingCount, DelayMs, Verbose, ServerNode) ->
-    Handler = self(),
+distribute_clients(Nodes, NumClients, NumMessages, DelayMs, Main, true) ->
     NumNodes = length(Nodes),
-    io:format("Distributing ~p clients across ~p nodes (including server node).~n", [NumClients, NumNodes]),
+    io:format("Distributing ~p clients across ~p nodes to send ~p messages each...~n", [NumClients, NumNodes, NumMessages]),
 
     lists:foreach(fun(Index) ->
         Node = lists:nth((Index rem NumNodes) + 1, Nodes),  % Round-robin distribution
-        io:format("Starting client ~p on node ~s...~n", [Index, Node]),
-        spawn(Node, fun() -> ping_pong_client:start(ServerNode, PingCount, DelayMs, Handler, Verbose) end)
+        io:format("Starting client ~p on node '~p'...~n", [Index, Node]),
+        spawn(Node, fun() -> ping_pong_client:start(NumMessages, DelayMs, Main, true) end)
     end, lists:seq(1, NumClients)),
-
-    io:format("All clients started.~n"),
 
     lists:foreach(fun(_) ->
         receive
-            {Pid, done} -> io:format("Client ~p finished.~n", [Pid])
+            {client, Pid, done} -> io:format("Client ~p finished.~n", [Pid])
+        end
+    end, lists:seq(1, NumClients));
+distribute_clients(Nodes, NumClients, NumMessages, DelayMs, Main, false) ->
+    NumNodes = length(Nodes),
+    io:format("Distributing ~p clients across ~p nodes to send ~p messages each...~n", [NumClients, NumNodes, NumMessages]),
+
+    lists:foreach(fun(Index) ->
+        Node = lists:nth((Index rem NumNodes) + 1, Nodes),  % Round-robin distribution
+        spawn(Node, fun() -> ping_pong_client:start(NumMessages, DelayMs, Main, false) end)
+    end, lists:seq(1, NumClients)),
+
+    lists:foreach(fun(_) ->
+        receive
+            {client, _Pid, done} -> done
         end
     end, lists:seq(1, NumClients)).
 

@@ -1,28 +1,25 @@
 % ping_pong_client.erl
 -module(ping_pong_client).
--export([start/1, start/2, start/3, start/5]).
+-export([start/0, start/1, start/2, start/4]).
 
-start(ServerNode) ->
-    % Start the ping-pong loop with the given server's fully-qualified node name
-    ping_pong(ServerNode, 10, 1000).
+start() ->
+    client(10, 1000).
 
-start(ServerNode, MaxPings) ->
-    % Start the ping-pong loop with the given server's fully-qualified node name
-    ping_pong(ServerNode, MaxPings, 1000).
+start(NumMessages) ->
+    client(NumMessages, 1000).
 
-start(ServerNode, MaxPings, DelayMs) ->
-    % Start the ping-pong loop with the given server's fully-qualified node name
-    ping_pong(ServerNode, MaxPings, DelayMs).
+start(NumMessages, DelayMs) ->
+    client(NumMessages, DelayMs).
 
-start(ServerNode, MaxPings, DelayMs, Handler, Verbose) ->
-    % Start the ping-pong loop with the given server's fully-qualified node name by a handler process
-    ping_pong(ServerNode, MaxPings, DelayMs, Handler, Verbose).
+start(NumMessages, DelayMs, Main, Verbose) ->
+    client(NumMessages, DelayMs, Main, Verbose).
 
-ping_pong(_, 0, _) ->
-    io:format("Client reached max pings, terminating.~n");
-ping_pong(ServerNode, MaxPings, DelayMs) ->
+% Client process: Sends messages to the server and waits for responses
+client(0, _) ->
+    io:format("Client ~p reached max pings, terminating.~n", [self()]);
+client(NumMessages, DelayMs) ->
     % Send a ping to the server
-    global:send(ping_pong_server, {ping, self()}),
+    global:send(ping_pong_server, {self(), ping}),
 
     % Wait for a pong message
     receive
@@ -30,17 +27,18 @@ ping_pong(ServerNode, MaxPings, DelayMs) ->
             io:format("Client ~p received: pong~n", [self()]),
             % Delay before sending the next ping
             timer:sleep(DelayMs), % Delay milliseconds
-            ping_pong(ServerNode, MaxPings - 1, DelayMs)
+            client(NumMessages - 1, DelayMs)
     end.
 
-ping_pong(_, 0, _, Handler, _) ->
-    % Signal completion to handler process
-    Handler ! {self(), done},
-    io:format("Client ~p reached max pings, terminating.~n", [self()]);
-% Verbose output
-ping_pong(ServerNode, MaxPings, DelayMs, Handler, true) ->
+% Client process: Sends messages to the server and waits for responses
+client(0, _, Main, true) ->
+    io:format("Client ~p reached max pings, terminating.~n", [self()]),
+    Main ! {client, self(), done}; % Notify the main process that client is done
+client(0, _, Main, false) ->
+    Main ! {client, self(), done}; % Notify the main process that client is done
+client(NumMessages, DelayMs, Main, true) ->
     % Send a ping to the server
-    global:send(ping_pong_server, {ping, self()}),
+    global:send(ping_pong_server, {self(), ping}),
 
     % Wait for a pong message
     receive
@@ -48,17 +46,17 @@ ping_pong(ServerNode, MaxPings, DelayMs, Handler, true) ->
             io:format("Client ~p received: pong~n", [self()]),
             % Delay before sending the next ping
             timer:sleep(DelayMs), % Delay milliseconds
-            ping_pong(ServerNode, MaxPings - 1, DelayMs, Handler, true)
+            client(NumMessages - 1, DelayMs, Main, true)
     end;
-ping_pong(ServerNode, MaxPings, DelayMs, Handler, false) ->
+client(NumMessages, DelayMs, Main, false) -> % Silent mode
     % Send a ping to the server
-    global:send(ping_pong_server, {ping, self()}),
+    global:send(ping_pong_server, {self(), ping}),
 
     % Wait for a pong message
     receive
         pong ->
             % Delay before sending the next ping
             timer:sleep(DelayMs), % Delay milliseconds
-            ping_pong(ServerNode, MaxPings - 1, DelayMs, Handler, false)
+            client(NumMessages - 1, DelayMs, Main, false)
     end.
 

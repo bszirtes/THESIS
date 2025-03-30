@@ -16,5 +16,5 @@ COPY ping_pong_server.out /app/ping_pong_server
 # Expose the default server port
 EXPOSE 4242
 
-# Define the default command
-CMD ["/app/ping_pong_server", "--port=4242"]
+# Define the default entrypoint
+ENTRYPOINT ["/app/ping_pong_server"]

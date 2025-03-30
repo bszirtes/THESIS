@@ -4,8 +4,8 @@ metadata:
   name: caf-client
   namespace: ping-pong
 spec:
-  completions: 1  # Set number of clients to run
-  parallelism: 1  # Set number of clients to run
+  completions: 2  # Set number of clients to run
+  parallelism: 2  # Set number of clients to run
   template:
     metadata:
       labels:
@@ -14,9 +14,10 @@ spec:
       restartPolicy: Never
       containers:
         - name: caf-client
-          image: localhost:5001/ping-pong-client:v2
+          image: localhost:5001/ping-pong-client:v4
           command: ["/app/ping_pong_client"]
           args:
-            - "--server=caf-load-balancer"
-            - "--pings=4"
-            - "--delay=5000"
+            - "--server-address=caf-server"
+            - "--messages=20"
+            - "--delay=1000"
+            - "--verbose"

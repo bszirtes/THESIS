@@ -4,42 +4,44 @@
 
 using namespace caf;
 
-// Define the server behavior
-behavior ping_pong_server(event_based_actor *self) {
-  return {[=](const std::string &msg, actor client) {
-    if (msg == "ping") {
-      aout(self) << "Server received: " << msg << "\n";
-      self->send(client, "pong", self);
+// Server behavior: Processes "ping" messages from clients and responds with
+// "pong".
+behavior server_fun(event_based_actor *self, const bool verbose) {
+  return {[=](const actor &client, atom_value msg) {
+    if (msg == atom("ping")) {
+      if (verbose)
+        aout(self) << "Server received: " << to_string(msg) << std::endl;
+      self->send(client, atom("pong"));
     }
   }};
 }
 
-// Define config structure to allow parameterization
+// Configuration structure for setting up the actor system parameters
 struct config : public actor_system_config {
-  int port = 4242; // Default port
+  int port = 4242;
+  bool verbose = false;
 
   config() {
-    opt_group{custom_options_, "global"}.add(port, "port",
-                                             "Port number for the server");
+    opt_group{custom_options_, "global"}
+        .add(port, "port", "Server port")
+        .add(verbose, "verbose", "Verbose output");
   }
 };
 
 void caf_main(actor_system &sys, const config &cfg) {
-  // Read parameters from the config
-  int port = cfg.port;
+  std::cout << "Starting server on port '" << cfg.port << "'..." << std::endl;
 
-  std::cout << "Starting server on port " << port << std::endl;
-
-  // Spawn the server actor
-  auto server = sys.spawn(ping_pong_server);
+  // Spawn server actor
+  auto server = sys.spawn(server_fun, cfg.verbose);
 
   // Publish the server actor on the given port
-  auto res = sys.middleman().publish(server, port, nullptr);
+  auto res = sys.middleman().publish(server, cfg.port);
   if (!res) {
     std::cerr << "Failed to publish server: " << to_string(res.error())
               << std::endl;
+    std::exit(1);
   } else {
-    std::cout << "Server is running on port " << *res << std::endl;
+    std::cout << "Server is running on port '" << *res << "'." << std::endl;
   }
 }
 

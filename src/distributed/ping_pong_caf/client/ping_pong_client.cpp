@@ -1,5 +1,6 @@
 #include <caf/all.hpp>
 #include <caf/io/all.hpp>
+#include <caf/send.hpp>
 #include <chrono>  // For std::chrono::milliseconds
 #include <cstdlib> // For std::atoi
 #include <iostream>
@@ -7,70 +8,72 @@
 
 using namespace caf;
 
-// Define client behavior with explicit wait
-behavior ping_actor(event_based_actor *self, actor server, int max_pings,
-                    int delay_ms) {
-  int remaining_pings = max_pings;
-  self->send(server, "ping", self);
+// Client behavior: Sends a predefined number of "ping" messages to the
+// server with optional delay and waits for "pong" responses.
+behavior client_fun(event_based_actor *self, const actor &server,
+                    const size_t num_messages, const int delay_ms,
+                    const bool verbose) {
+  size_t responses_received = 0;
 
-  return {[=](const std::string &msg, actor server) mutable {
-    if (msg == "pong" && remaining_pings > 1) {
-      aout(self) << "Client received: " << msg << "\n";
-      --remaining_pings;
-
-      // Explicit wait before sending the next ping (blocking)
-      std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
-
-      // Send the next ping after the delay
-      self->send(server, "ping", self);
-    } else {
-      aout(self) << "Client reached max pings (" << max_pings
-                 << "), terminating.\n";
-      self->quit();
+  return {[=](atom_value msg) mutable {
+    if (msg == atom("start")) {
+      self->send(server, self, atom("ping"));
+    }
+    if (msg == atom("pong")) {
+      ++responses_received;
+      if (verbose)
+        aout(self) << "Client received: " << to_string(msg) << std::endl;
+      if (responses_received == num_messages) {
+        if (verbose)
+          aout(self) << "Client reached max pings, terminating." << std::endl;
+        self->quit();
+      } else {
+        // Explicit wait before sending the next ping
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
+        self->send(server, self, atom("ping"));
+      }
     }
   }};
 }
 
 // Define config structure
 struct config : public actor_system_config {
-  std::string server_address =
-      "localhost";        // Default to localhost for local testing
-  int server_port = 4242; // Default server port
-  int max_pings = 10;     // Default number of ping messages
-  int delay_ms = 1000;    // Default delay (1000ms = 1 second)
+  std::string server_address = "localhost";
+  int server_port = 4242;
+  int num_messages = 10;
+  int delay_ms = 1000;
+  bool verbose = false;
 
   config() {
     opt_group{custom_options_, "global"}
-        .add(server_address, "server,s", "Server address")
-        .add(server_port, "port", "Server port")
-        .add(max_pings, "pings,p", "Number of ping messages to send")
-        .add(delay_ms, "delay,d", "Delay (milliseconds) between messages");
+        .add(server_address, "server-address", "Server address")
+        .add(server_port, "server-port", "Server port")
+        .add(num_messages, "messages", "Number of messages to send")
+        .add(delay_ms, "delay", "Delay (milliseconds) between messages")
+        .add(verbose, "verbose", "Verbose output");
   }
 };
 
 void caf_main(actor_system &sys, const config &cfg) {
-  std::string server_host = cfg.server_address; // Read from config
-  uint16_t server_port = cfg.server_port;
-  int max_pings = cfg.max_pings;
-  int delay_ms = cfg.delay_ms;
-
-  std::cout << "Client connecting to: " << server_host << ":" << server_port
-            << std::endl;
-  std::cout << "Ping count: " << max_pings << ", Delay: " << delay_ms << "ms"
-            << std::endl;
+  if (cfg.verbose)
+    std::cout << "Client connecting to '" << cfg.server_address << ":"
+              << cfg.server_port << "' to send " << cfg.num_messages
+              << " messages with " << cfg.delay_ms << "ms delay..."
+              << std::endl;
 
   // Connect to the server
-  auto server = sys.middleman().remote_actor(server_host, server_port);
+  auto server =
+      sys.middleman().remote_actor(cfg.server_address, cfg.server_port);
   if (!server) {
     std::cerr << "Failed to connect to server: " << to_string(server.error())
               << std::endl;
-  std:
-    exit(1);
-    return;
+    std::exit(1);
   }
 
-  // Start client actor
-  sys.spawn(ping_actor, *server, max_pings, delay_ms);
+  // Spawn client actor
+  auto client_actor = sys.spawn(client_fun, *server, cfg.num_messages,
+                                cfg.delay_ms, cfg.verbose);
+  anon_send(client_actor, atom("start"));
 }
 
 // Enable CAF's network capabilities

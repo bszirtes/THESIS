@@ -13,5 +13,5 @@ WORKDIR /app
 # Copy the client binary
 COPY ping_pong_client.out /app/ping_pong_client
 
-# Define the default command
-CMD ["/app/ping_pong_client", "--server=caf-server", "--pings=10", "--delay=1000"]
+# Define the default entrypoint
+ENTRYPOINT ["/app/ping_pong_client"]

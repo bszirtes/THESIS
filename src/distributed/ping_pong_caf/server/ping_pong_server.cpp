@@ -29,8 +29,6 @@ struct config : public actor_system_config {
 };
 
 void caf_main(actor_system &sys, const config &cfg) {
-  std::cout << "Starting server on port '" << cfg.port << "'..." << std::endl;
-
   // Spawn server actor
   auto server = sys.spawn(server_fun, cfg.verbose);
 
@@ -41,7 +39,7 @@ void caf_main(actor_system &sys, const config &cfg) {
               << std::endl;
     std::exit(1);
   } else {
-    std::cout << "Server is running on port '" << *res << "'." << std::endl;
+    std::cout << "Server is running on port " << *res << "" << std::endl;
   }
 }
 

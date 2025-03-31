@@ -65,14 +65,14 @@ start_server(ServerNode, false, Main, Verbose) ->
 stop_server(true, _) ->
     io:format("Skipping server stop as \"no-server\" was provided.~n");
 stop_server(false, true) -> % Verbose mode enabled
-    timer:sleep(200),
+    timer:sleep(500),
     global:send(ping_pong_server, stop),
     receive
         {server, Pid, done} ->
             io:format("Server ~p finished.~n", [Pid])
     end;
 stop_server(false, false) -> % Silent mode
-    timer:sleep(200),
+    timer:sleep(500),
     global:send(ping_pong_server, stop),
     receive
         {server, _Pid, done} -> done

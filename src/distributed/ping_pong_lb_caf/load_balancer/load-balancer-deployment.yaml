@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caf-load-balancer
+  namespace: ping-pong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: caf-load-balancer
+  template:
+    metadata:
+      labels:
+        app: caf-load-balancer
+    spec:
+      containers:
+        - name: load-balancer
+          image: localhost:5001/ping-pong-lb-load-balancer:v2
+          args:
+            - "--port=4242"
+          ports:
+            - containerPort: 4242
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: caf-load-balancer
+  namespace: ping-pong
+spec:
+  selector:
+    app: caf-load-balancer
+  ports:
+    - protocol: TCP
+      port: 4242
+      targetPort: 4242
+  type: LoadBalancer

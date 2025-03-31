@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caf-server
+  namespace: ping-pong
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: caf-server
+  template:
+    metadata:
+      labels:
+        app: caf-server
+    spec:
+      containers:
+        - name: caf-server
+          image: localhost:5001/ping-pong-lb-server:v2
+          command: ["/app/ping_pong_lb_server"]
+          args:
+            - "--port=4243"
+            - "--lb-address=caf-load-balancer"
+            - "--lb-port=4242"
+            - "--verbose"
+          ports:
+            - containerPort: 4243
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: caf-server
+  namespace: ping-pong
+spec:
+  selector:
+    app: caf-server
+  ports:
+    - protocol: TCP
+      port: 4243
+      targetPort: 4243

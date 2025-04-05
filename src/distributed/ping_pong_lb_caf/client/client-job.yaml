@@ -4,8 +4,8 @@ metadata:
   name: caf-client
   namespace: ping-pong
 spec:
-  completions: 1  # Set number of clients to run
-  parallelism: 1  # Set number of clients to run
+  completions: 4  # Set number of clients to run
+  parallelism: 4  # Set number of clients to run
   template:
     metadata:
       labels:

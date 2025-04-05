@@ -2,9 +2,10 @@
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 <num_clients> <num_messages> <delay_ms> <path-to-kubeconfig> [--no-server] [--verbose]"
-    echo "  --no-server: Skip deploying the server (use if server is already running)"
+    echo "Usage: $0 <nodes> <num_servers> <num_clients> <num_messages> <delay_ms> <path-to-kubeconfig> [--no-load-balancer] [--verbose]"
+    echo "  --no-load-balancer: Skip deploying the load balancer (use if load balancer is already running)"
     echo "  --verbose:   Verbose output for debugging"
+    echo "  The node list is not used in the script, it is just a note."
     exit 1
 }
 
@@ -16,7 +17,7 @@ metadata:
   name: caf-server
   namespace: ping-pong
 spec:
-  replicas: 1
+  replicas: $NUM_SERVERS
   selector:
     matchLabels:
       app: caf-server
@@ -27,12 +28,14 @@ spec:
     spec:
       containers:
         - name: caf-server
-          image: localhost:5001/ping-pong-server:v4
+          image: localhost:5001/ping-pong-lb-server:v2
+          command: ["/app/ping_pong_lb_server"]
           ports:
-            - containerPort: 4242
-          command: ["/app/ping_pong_server"]
+            - containerPort: 4243
           args:
-            - "--port=4242"
+            - "--port=4243"
+            - "--lb-address=caf-load-balancer"
+            - "--lb-port=4242"
 EOF
 
     if [[ "$1" == "true" ]]; then
@@ -61,7 +64,8 @@ spec:
           image: localhost:5001/ping-pong-client:v4
           command: ["/app/ping_pong_client"]
           args:
-            - "--server-address=caf-server"
+            - "--server-address=caf-load-balancer"
+            - "--server-port=4242"
             - "--messages=$NUM_MESSAGES"
             - "--delay=$DELAY_MS"
 EOF
@@ -71,28 +75,29 @@ EOF
 }
 
 # Check if the correct number of arguments is provided
-if [ "$#" -lt 4 ]; then
+if [ "$#" -lt 6 ]; then
     usage
 fi
 
 # Export KUBECONFIG
-export KUBECONFIG=$4
+export KUBECONFIG=$6
 
 # Get the directory of the current script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Get script arguments
-NUM_CLIENTS=$1
-NUM_MESSAGES=$2
-DELAY_MS=$3
-NO_SERVER=false
+NUM_SERVERS=$2
+NUM_CLIENTS=$3
+NUM_MESSAGES=$4
+DELAY_MS=$5
+NO_LOAD_BALANCER=false
 VERBOSE=false
 
 # Parse optional parameters
 for arg in "$@"; do
     case "$arg" in
-    "--no-server")
-        NO_SERVER=true
+    "--no-load-balancer")
+        NO_LOAD_BALANCER=true
         shift
         ;;
     "--verbose")
@@ -105,7 +110,7 @@ done
 shift $((OPTIND - 1)) # Remove parsed options from positional parameters
 
 # Check if required parameters are provided
-if [ -z "$KUBECONFIG" ] || [ -z "$NUM_CLIENTS" ] || [ -z "$NUM_MESSAGES" ] || [ -z "$DELAY_MS" ]; then
+if [ -z "$NUM_SERVERS" ] || [ -z "$NUM_CLIENTS" ] || [ -z "$NUM_MESSAGES" ] || [ -z "$DELAY_MS" ] || [ -z "$KUBECONFIG" ]; then
     usage
 fi
 
@@ -113,17 +118,28 @@ fi
 create_server_yaml $VERBOSE
 create_client_yaml $VERBOSE
 
-# Deploy the server and its service if not skipping
+# Deploy the load balancer and its service if not skipping
 kubectl apply -f "$SCRIPT_DIR"/server-service.yaml >>kubectl.log 2>&1
-if [ "$NO_SERVER" = false ]; then
-    echo "Starting server..."
+if [ "$NO_LOAD_BALANCER" = false ]; then
+    echo "Starting load balancer..."
+    kubectl apply -f "$SCRIPT_DIR"/load_balancer/load-balancer-deployment.yaml >>kubectl.log 2>&1
+
+    # Wait for the load balancer to be up and running
+    kubectl rollout status --namespace ping-pong deployment/caf-load-balancer >>kubectl.log 2>&1
+
+    echo "Starting $NUM_SERVERS servers..."
     kubectl apply -f "$SCRIPT_DIR"/temp-server-deployment.yaml >>kubectl.log 2>&1
 
     # Wait for the server to be up and running
     kubectl rollout status --namespace ping-pong deployment/caf-server >>kubectl.log 2>&1
 
 else
-    echo "Skipping server start as \"--no-server\" was provided."
+    echo "Skipping load balancer and server start as \"--no-load-balancer\" was provided."
+    echo "Scaling servers to $NUM_SERVERS..."
+    kubectl scale deployment --namespace ping-pong caf-server --replicas $NUM_SERVERS >>kubectl.log 2>&1
+
+    # Wait for the server to be up and running
+    kubectl rollout status --namespace ping-pong deployment/caf-server >>kubectl.log 2>&1
 fi
 
 echo "Distributing $NUM_CLIENTS clients across nodes to send $NUM_MESSAGES messages each..."
@@ -142,18 +158,22 @@ if [ "$job_status" -eq 0 ]; then
 fi
 
 # Cleanup - Delete the client job and server if needed
-echo "All clients finished, terminating server."
+echo "All clients finished, terminating servers and load balancer."
 
 # Delete the client job
 kubectl delete job --namespace ping-pong caf-client >>kubectl.log 2>&1
 
 # If server was deployed, delete it
-if [ "$NO_SERVER" = false ]; then
+if [ "$NO_LOAD_BALANCER" = false ]; then
     kubectl delete deployment --namespace ping-pong caf-server --grace-period=0 --force >>kubectl.log 2>&1
     # Wait for server deletion
     kubectl wait --namespace ping-pong --for=delete deployment/caf-server >>kubectl.log 2>&1
+
+    kubectl delete deployment --namespace ping-pong caf-load-balancer --grace-period=0 --force >>kubectl.log 2>&1
+    # Wait for load balancer deletion
+    kubectl wait --namespace ping-pong --for=delete deployment/caf-load-balancer >>kubectl.log 2>&1
 else
-    echo "Skipping server stop as \"--no-server\" was provided."
+    echo "Skipping load balancer and server stop as \"--no-load-balancer\" was provided."
 fi
 
 echo "------------------------------" >>kubectl.log

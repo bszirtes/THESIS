@@ -30,10 +30,11 @@ main(Args) ->
 parse_args([NodesStr, NumClientsStr, NumMessagesStr, DelayMsStr | Rest]) ->
     Nodes = parse_nodes(NodesStr),
     case {string:to_integer(NumClientsStr), string:to_integer(NumMessagesStr), string:to_integer(DelayMsStr)} of
-        {{IntClients, _}, {IntPings, _}, {IntDelay, _}} ->
+        {{IntClients, _}, {IntMessages, _}, {IntDelay, _}}
+          when IntClients /= error andalso IntMessages /= error andalso IntDelay /= error ->
             NoServer = lists:member("no-server", Rest), % Check for no-server flag
             Verbose = lists:member("verbose", Rest), % Check for verbosity flag
-            {ok, Nodes, IntClients, IntPings, IntDelay, NoServer, Verbose};
+            {ok, Nodes, IntClients, IntMessages, IntDelay, NoServer, Verbose};
         _ ->
             {error, "Invalid arguments."}
     end;

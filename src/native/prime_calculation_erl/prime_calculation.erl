@@ -28,12 +28,12 @@ main(Args) ->
     Start = erlang:monotonic_time(),    % Get start time in native units
     Count = find_primes(Range),         % Count prime numbers in the given range
     End = erlang:monotonic_time(),      % Get end time
-    Elapsed = erlang:convert_time_unit(End - Start, native, second),
+    Elapsed = erlang:convert_time_unit(End - Start, native, millisecond),
     % Convert elapsed time to seconds
 
     %% Print the results
     io:format("Found ~p prime numbers in range 1 to ~p~n", [Count, Range]),
-    io:format("Time elapsed: ~p seconds.~n", [Elapsed]),
+    io:format("Time elapsed: ~p seconds.~n", [Elapsed / 1000]),
 
     halt(0).  % Terminate program execution
 

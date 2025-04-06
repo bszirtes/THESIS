@@ -1,34 +1,36 @@
-%% ping_pong_lb.erl
+%% ping_pong_lb_prime.erl
 %%
 %% This module implements a distributed message-passing system using the Actor model in Erlang.
-%% It simulates clients sending messages (pings) to servers through a load balancer.
-%% Servers process messages and respond with pongs. The main process ensures orderly termination.
+%% It simulates clients sending messages to servers through a load balancer.
+%% Servers calculate the number of primes in the received range and respond with the result.
+%% The main process ensures orderly termination.
 %%
 %% Parameters:
 %% - NumServers: Number of server processes.
 %% - NumClients: Number of client processes.
 %% - NumMessages: Number of messages each client sends.
+%% - PrimeRange: Range for prime calculation.
 %% - verbose: Verbose mode for debugging.
 %%
 %% The system terminates when the clients, the servers and the load balancer finish processing.
 
--module(ping_pong_lb).
+-module(ping_pong_lb_prime).
 -export([main/0, main/1]).
 
 % Entry point of the program
 main() ->
-    start(2, 8, 10, false).
+    start(2, 8, 10, 50000, false).
 
 main(Args) ->
     case parse_args(Args) of
-        {ok, NumServers, NumClients, NumMessages, Verbose} ->
-            start(NumServers, NumClients, NumMessages, Verbose); % Start the system with parsed parameters
+        {ok, NumServers, NumClients, NumMessages, PrimeRange, Verbose} ->
+            start(NumServers, NumClients, NumMessages, PrimeRange, Verbose); % Start the system with parsed parameters
         {error, Msg} ->
-            io:format("Error: ~s~nUsage: main <num_servers> <num_clients> <num_messages> [verbose]~n", [Msg])
+            io:format("Error: ~s~nUsage: main <num_servers> <num_clients> <num_messages> <prime_range> [verbose]~n", [Msg])
     end.
 
 % Initializes the system: spawns servers, clients and load balancer
-start(NumServers, NumClients, NumMessages, Verbose) ->
+start(NumServers, NumClients, NumMessages, PrimeRange, Verbose) ->
     Main = self(), % Store reference to the main process
 
     % Spawn server processes
@@ -41,7 +43,7 @@ start(NumServers, NumClients, NumMessages, Verbose) ->
 
     % Spawn client processes
     io:format("Starting ~p clients to send ~p messages each...~n", [NumClients, NumMessages]),
-    [spawn(fun() -> client(LoadBalancer, NumMessages, Main, Verbose) end) || _ <- lists:seq(1, NumClients)],
+    [spawn(fun() -> client(LoadBalancer, NumMessages, PrimeRange, Main, Verbose) end) || _ <- lists:seq(1, NumClients)],
 
     % Wait for all clients, servers and the load balancer to finish
     wait_for_processes(LoadBalancer, Servers, NumServers, NumClients, Verbose),
@@ -50,12 +52,12 @@ start(NumServers, NumClients, NumMessages, Verbose) ->
     halt(0). % Shutdown the system
 
 % Parses command-line arguments and converts them
-parse_args([NumServersStr, NumClientsStr, NumMessagesStr | Rest]) ->
-    case {string:to_integer(NumServersStr), string:to_integer(NumClientsStr), string:to_integer(NumMessagesStr)} of
-        {{IntServers, _}, {IntClients, _}, {IntMessages, _}}
-          when IntServers /= error andalso IntClients /= error andalso IntMessages /= error ->
+parse_args([NumServersStr, NumClientsStr, NumMessagesStr, PrimeRangeStr | Rest]) ->
+    case {string:to_integer(NumServersStr), string:to_integer(NumClientsStr), string:to_integer(NumMessagesStr), string:to_integer(PrimeRangeStr)} of
+        {{IntServers, _}, {IntClients, _}, {IntMessages, _}, {IntPrimeRange, _}}
+          when IntServers /= error andalso IntClients /= error andalso IntMessages /= error andalso IntPrimeRange /= error ->
             Verbose = lists:member("verbose", Rest), % Check for verbosity flag
-            {ok, IntServers, IntClients, IntMessages, Verbose};
+            {ok, IntServers, IntClients, IntMessages, IntPrimeRange, Verbose};
         _ ->
             {error, "Invalid arguments."}
     end;
@@ -63,38 +65,38 @@ parse_args(_) ->
     {error, "Invalid number of arguments."}.
 
 
-% Client process: Sends messages to the load balancer and waits for responses
-client(_, 0, Main, true) ->
-    io:format("Client ~p reached max pings, terminating.~n", [self()]),
+% Client process: Sends messages to the load balancer and waits for the number of the found primes in the sent range
+client(_, 0, _, Main, true) ->
+    io:format("Client ~p reached max messages, terminating.~n", [self()]),
     Main ! {client, self(), done}; % Notify the main process that client is done
-client(_, 0, Main, false) ->
+client(_, 0, _, Main, false) ->
     Main ! {client, self(), done}; % Notify the main process that client is done
-client(LoadBalancer, NumMessages, Main, true) -> % Verbose mode
-    % Send a ping to the server
-    LoadBalancer ! {self(), ping},
+client(LoadBalancer, NumMessages, PrimeRange, Main, true) -> % Verbose mode
+    % Send the range to the server
+    LoadBalancer ! {self(), PrimeRange},
 
     % Wait for a pong message
     receive
-        pong ->
-            io:format("Client ~p received: pong~n", [self()]),
-            client(LoadBalancer, NumMessages - 1, Main, true) % Recursively send more messages
+        FoundPrimes ->
+            io:format("Client ~p received: ~p~n", [self(), FoundPrimes]),
+            client(LoadBalancer, NumMessages - 1, PrimeRange, Main, true) % Recursively send more messages
     end;
-client(LoadBalancer, NumMessages, Main, false) -> % Silent mode
-    % Send a ping to the server
-    LoadBalancer ! {self(), ping},
+client(LoadBalancer, NumMessages, PrimeRange, Main, false) -> % Silent mode
+    % Send the range to the server
+    LoadBalancer ! {self(), PrimeRange},
 
     % Wait for a pong message
     receive
-        pong ->
-            client(LoadBalancer, NumMessages - 1, Main, false) % Recursively send more messages
+        _FoundPrimes ->
+            client(LoadBalancer, NumMessages - 1, PrimeRange, Main, false) % Recursively send more messages
     end.
 
-% Server process: Handles ping messages and responds with pong messages
+% Server process: Handles messages from clients and responds with the found number of primes in the received range
 server(Main, true) -> % Verbose mode enabled
     receive
-        {From, ping} ->
-            io:format("Server ~p received: ping~n", [self()]),
-            From ! pong, % Respond with pong
+        {From, PrimeRange} ->
+            io:format("Server ~p received: ~p~n", [self(), PrimeRange]),
+            From ! find_primes(PrimeRange), % Respond with the number of primes found
             server(Main, true); % Recursively wait for more messages
         stop ->
             io:format("Server ~p terminating.~n", [self()]),
@@ -102,8 +104,8 @@ server(Main, true) -> % Verbose mode enabled
     end;
 server(Main, false) -> % Silent mode
     receive
-        {From, ping} ->
-            From ! pong, % Respond with pong
+        {From, PrimeRange} ->
+            From ! find_primes(PrimeRange), % Respond with the number of primes found
             server(Main, false); % Recursively wait for more messages
         stop ->
             Main ! {server, self(), done} % Notify the main process
@@ -172,4 +174,20 @@ wait_for_processes(LoadBalancer, Servers, NumServers, NumClients, false) ->
         {client, _Pid, done} ->
             wait_for_processes(LoadBalancer, Servers, NumServers, NumClients - 1, false) % Decrement client count
     end.
+
+%% Function to check if a number is prime
+is_prime(N) when N < 2 -> false;
+is_prime(2) -> true;
+is_prime(N) ->
+    Max = trunc(math:sqrt(N)),
+    not lists:any(fun(X) -> N rem X =:= 0 end, lists:seq(2, Max)).
+
+%% Function to count prime numbers up to a given limit
+find_primes(Max) ->
+    lists:foldl(fun(N, Acc) ->
+                    case is_prime(N) of
+                        true -> Acc + 1;
+                        false -> Acc
+                    end
+                end, 0, lists:seq(2, Max)).
 

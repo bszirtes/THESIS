@@ -29,7 +29,6 @@ spec:
       containers:
         - name: caf-server
           image: localhost:5001/ping-pong-lb-server:v2
-          command: ["/app/ping_pong_lb_server"]
           ports:
             - containerPort: 4243
           args:
@@ -62,7 +61,6 @@ spec:
       containers:
         - name: caf-client
           image: localhost:5001/ping-pong-client:v4
-          command: ["/app/ping_pong_client"]
           args:
             - "--server-address=caf-load-balancer"
             - "--server-port=4242"
@@ -119,10 +117,14 @@ create_server_yaml $VERBOSE
 create_client_yaml $VERBOSE
 
 # Deploy the load balancer and its service if not skipping
-kubectl apply -f "$SCRIPT_DIR"/server-service.yaml >>kubectl.log 2>&1
 if [ "$NO_LOAD_BALANCER" = false ]; then
+    # Create the namespace for the deployment
+    kubectl create namespace ping-pong >>kubectl.log 2>&1
+    kubectl apply -f "$SCRIPT_DIR"/server-service.yaml >>kubectl.log 2>&1
+
     echo "Starting load balancer..."
     kubectl apply -f "$SCRIPT_DIR"/load_balancer/load-balancer-deployment.yaml >>kubectl.log 2>&1
+    sleep 2
 
     # Wait for the load balancer to be up and running
     kubectl rollout status --namespace ping-pong deployment/caf-load-balancer >>kubectl.log 2>&1
@@ -132,11 +134,10 @@ if [ "$NO_LOAD_BALANCER" = false ]; then
 
     # Wait for the server to be up and running
     kubectl rollout status --namespace ping-pong deployment/caf-server >>kubectl.log 2>&1
-
 else
     echo "Skipping load balancer and server start as \"--no-load-balancer\" was provided."
     echo "Scaling servers to $NUM_SERVERS..."
-    kubectl scale deployment --namespace ping-pong caf-server --replicas $NUM_SERVERS >>kubectl.log 2>&1
+    kubectl apply -f "$SCRIPT_DIR"/temp-server-deployment.yaml >>kubectl.log 2>&1
 
     # Wait for the server to be up and running
     kubectl rollout status --namespace ping-pong deployment/caf-server >>kubectl.log 2>&1
@@ -172,6 +173,10 @@ if [ "$NO_LOAD_BALANCER" = false ]; then
     kubectl delete deployment --namespace ping-pong caf-load-balancer --grace-period=0 --force >>kubectl.log 2>&1
     # Wait for load balancer deletion
     kubectl wait --namespace ping-pong --for=delete deployment/caf-load-balancer >>kubectl.log 2>&1
+
+    kubectl delete namespace ping-pong >>kubectl.log 2>&1
+    # Wait for namespace deletion
+    kubectl wait --for=delete namespace ping-pong >>kubectl.log 2>&1
 else
     echo "Skipping load balancer and server stop as \"--no-load-balancer\" was provided."
 fi

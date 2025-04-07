@@ -4,7 +4,7 @@ metadata:
   name: caf-server
   namespace: ping-pong
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: caf-server
@@ -15,12 +15,14 @@ spec:
     spec:
       containers:
         - name: caf-server
-          image: localhost:5001/ping-pong-server:v4
+          image: localhost:5001/ping-pong-lb-prime-server:v1
           args:
-            - "--port=4242"
+            - "--port=4243"
+            - "--lb-address=caf-load-balancer"
+            - "--lb-port=4242"
             - "--verbose"
           ports:
-            - containerPort: 4242
+            - containerPort: 4243
 ---
 apiVersion: v1
 kind: Service
@@ -32,5 +34,5 @@ spec:
     app: caf-server
   ports:
     - protocol: TCP
-      port: 4242
-      targetPort: 4242
+      port: 4243
+      targetPort: 4243

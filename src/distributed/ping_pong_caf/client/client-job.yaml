@@ -15,7 +15,6 @@ spec:
       containers:
         - name: caf-client
           image: localhost:5001/ping-pong-client:v4
-          command: ["/app/ping_pong_client"]
           args:
             - "--server-address=caf-server"
             - "--messages=20"

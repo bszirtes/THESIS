@@ -16,7 +16,6 @@ spec:
       containers:
         - name: caf-server
           image: localhost:5001/ping-pong-lb-server:v2
-          command: ["/app/ping_pong_lb_server"]
           args:
             - "--port=4243"
             - "--lb-address=caf-load-balancer"

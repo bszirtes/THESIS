@@ -1,4 +1,4 @@
-% ping_pong_server.erl
+% ping_pong_lb_server.erl
 -module(ping_pong_lb_server).
 -export([start/0, start/1, start/2]).
 

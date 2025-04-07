@@ -1,41 +1,42 @@
-%% deploy_ping_pong.erl
+%% deploy_ping_pong_lb_prime_prime.erl
 %%
-%% This module implements a mult-node distributed message-passing system using the Actor model in Erlang.
-%% It simulates clients sending messages (pings) to servers through a load balancer.
-%% Servers process messages and responds with pongs. The main process ensures orderly termination.
+%% This module implements a distributed message-passing system using the Actor model in Erlang.
+%% It simulates clients sending messages to servers through a load balancer.
+%% Servers calculate the number of primes in the received range and respond with the result.
+%% The main process ensures orderly termination.
 %%
 %% Parameters:
 %% - Nodes: The nodes to deploy the server and clients on.
 %% - NumServers: Number of server processes.
 %% - NumClients: Number of client processes.
 %% - NumMessages: Number of messages each client sends.
-%% - DelayMs: Delay between each sent message (ms).
+%% - PrimeRange: Range for prime calculation.
 %% - no-load-balancer: Deploying with predeployed load balancer and servers.
 %% - verbose: Verbose mode for debugging.
 %%
-%% The system terminates when all clients and the server finish processing.
+%% The system terminates when the clients, the servers and the load balancer finish processing.
 
--module(deploy_ping_pong_lb).
+-module(deploy_ping_pong_lb_prime).
 -export([main/1]).
 
 % Entry point of the program
 main(Args) ->
     case parse_args(Args) of
-        {ok, Nodes, NumServers, NumClients, NumMessages, DelayMs, NoLoadBalancer, Verbose} ->
-            launch_deployment(Nodes, NumServers, NumClients, NumMessages, DelayMs, NoLoadBalancer, Verbose); % Start the system with parsed parameters
+        {ok, Nodes, NumServers, NumClients, NumMessages, PrimeRange, NoLoadBalancer, Verbose} ->
+            launch_deployment(Nodes, NumServers, NumClients, NumMessages, PrimeRange, NoLoadBalancer, Verbose); % Start the system with parsed parameters
         {error, Msg} ->
-            io:format("Error: ~s~nUsage: deploy \"['node1@host','node2@host',...]\" <num_servers> <num_clients> <num_messages> <delay_ms> [no-load-balancer] [verbose]~n", [Msg])
+            io:format("Error: ~s~nUsage: deploy \"['node1@host','node2@host',...]\" <num_servers> <num_clients> <num_messages> <prime_range> [no-load-balancer] [verbose]~n", [Msg])
     end.
 
 % Parses command-line arguments and converts them
-parse_args([NodesStr, NumServersStr, NumClientsStr, NumMessagesStr, DelayMsStr | Rest]) ->
+parse_args([NodesStr, NumServersStr, NumClientsStr, NumMessagesStr, PrimeRangeStr | Rest]) ->
     Nodes = parse_nodes(NodesStr),
-    case {string:to_integer(NumServersStr), string:to_integer(NumClientsStr), string:to_integer(NumMessagesStr), string:to_integer(DelayMsStr)} of
-        {{IntServers, _}, {IntClients, _}, {IntMessages, _}, {IntDelay, _}}
-          when IntServers /= error andalso IntClients /= error andalso IntMessages /= error andalso IntDelay /= error ->
+    case {string:to_integer(NumServersStr), string:to_integer(NumClientsStr), string:to_integer(NumMessagesStr), string:to_integer(PrimeRangeStr)} of
+        {{IntServers, _}, {IntClients, _}, {IntMessages, _}, {IntPrimeRange, _}}
+          when IntServers /= error andalso IntClients /= error andalso IntMessages /= error andalso IntPrimeRange /= error ->
             NoLoadBalancer = lists:member("no-load-balancer", Rest), % Check for no-load-balancer flag
             Verbose = lists:member("verbose", Rest), % Check for verbosity flag
-            {ok, Nodes, IntServers, IntClients, IntMessages, IntDelay, NoLoadBalancer, Verbose};
+            {ok, Nodes, IntServers, IntClients, IntMessages, IntPrimeRange, NoLoadBalancer, Verbose};
         _ ->
             {error, "Invalid arguments."}
     end;
@@ -48,12 +49,12 @@ parse_nodes(NodesStr) ->
     Parts = string:split(Stripped, ",", all),
     [list_to_atom(string:trim(P)) || P <- Parts].
 
-launch_deployment(Nodes, NumServers, NumClients, NumMessages, DelayMs, NoLoadBalancer, Verbose) ->
+launch_deployment(Nodes, NumServers, NumClients, NumMessages, PrimeRange, NoLoadBalancer, Verbose) ->
     Main = self(), % Store reference to the main process
     LoadBalancerNode = hd(Nodes),
     start_load_balancer(LoadBalancerNode, NoLoadBalancer, Main, Verbose),
     distribute_servers(Nodes, NumServers, Main, Verbose),
-    distribute_clients(Nodes, NumClients, NumMessages, DelayMs, Main, Verbose),
+    distribute_clients(Nodes, NumClients, NumMessages, PrimeRange, Main, Verbose),
     io:format("All clients finished, terminating servers and load balancer.~n"),
     stop_load_balancer(NoLoadBalancer, Verbose),
     io:format("Terminating.~n"),
@@ -63,7 +64,7 @@ start_load_balancer(_, true, _, _) ->
     io:format("Skipping load balancer and server start as \"no-load-balancer\" was provided.~n");
 start_load_balancer(LoadBalancerNode, false, Main, Verbose) ->
     io:format("Starting load balancer on node '~p'...~n", [LoadBalancerNode]),
-    spawn(LoadBalancerNode, fun() -> ping_pong_lb_load_balancer:start(Main, Verbose) end).
+    spawn(LoadBalancerNode, fun() -> ping_pong_lb_prime_load_balancer:start(Main, Verbose) end).
 
 stop_load_balancer(true, _) ->
     io:format("Skipping load balancer and server stop as \"no-load-balancer\" was provided.~n");
@@ -127,7 +128,7 @@ distribute_servers(Nodes, NumServers, Main, true) -> % Verbose mode enabled
             lists:foreach(fun(Index) ->
                 Node = lists:nth((Index rem NumNodes) + 1, Nodes),  % Round-robin distribution
                 io:format("Starting server ~p on node '~p'...~n", [Index, Node]),
-                spawn(Node, fun() -> ping_pong_lb_server:start(Main, true) end)
+                spawn(Node, fun() -> ping_pong_lb_prime_server:start(Main, true) end)
             end, lists:seq(NumDeployedServers + 1, NumServers));
         _ -> ok
     end,
@@ -154,20 +155,20 @@ distribute_servers(Nodes, NumServers, Main, false) -> % Silent mode
             NumNodes = length(Nodes),
             lists:foreach(fun(Index) ->
                 Node = lists:nth((Index rem NumNodes) + 1, Nodes),  % Round-robin distribution
-                spawn(Node, fun() -> ping_pong_lb_server:start(Main, false) end)
+                spawn(Node, fun() -> ping_pong_lb_prime_server:start(Main, false) end)
             end, lists:seq(NumDeployedServers + 1, NumServers));
         _ -> ok
     end,
     timer:sleep(500). % Wait for every server to register with the load balancer
 
-distribute_clients(Nodes, NumClients, NumMessages, DelayMs, Main, true) -> % Verbose mode enabled
+distribute_clients(Nodes, NumClients, NumMessages, PrimeRange, Main, true) -> % Verbose mode enabled
     NumNodes = length(Nodes),
     io:format("Distributing ~p clients across ~p nodes to send ~p messages each...~n", [NumClients, NumNodes, NumMessages]),
 
     lists:foreach(fun(Index) ->
         Node = lists:nth((Index rem NumNodes) + 1, Nodes),  % Round-robin distribution
         io:format("Starting client ~p on node '~p'...~n", [Index, Node]),
-        spawn(Node, fun() -> ping_pong_lb_client:start(NumMessages, DelayMs, Main, true) end)
+        spawn(Node, fun() -> ping_pong_lb_prime_client:start(NumMessages, PrimeRange, Main, true) end)
     end, lists:seq(1, NumClients)),
 
     lists:foreach(fun(_) ->
@@ -175,13 +176,13 @@ distribute_clients(Nodes, NumClients, NumMessages, DelayMs, Main, true) -> % Ver
             {client, Pid, done} -> io:format("Client ~p finished.~n", [Pid])
         end
     end, lists:seq(1, NumClients));
-distribute_clients(Nodes, NumClients, NumMessages, DelayMs, Main, false) -> % Silent mode
+distribute_clients(Nodes, NumClients, NumMessages, PrimeRange, Main, false) -> % Silent mode
     NumNodes = length(Nodes),
     io:format("Distributing ~p clients across ~p nodes to send ~p messages each...~n", [NumClients, NumNodes, NumMessages]),
 
     lists:foreach(fun(Index) ->
         Node = lists:nth((Index rem NumNodes) + 1, Nodes),  % Round-robin distribution
-        spawn(Node, fun() -> ping_pong_lb_client:start(NumMessages, DelayMs, Main, false) end)
+        spawn(Node, fun() -> ping_pong_lb_prime_client:start(NumMessages, PrimeRange, Main, false) end)
     end, lists:seq(1, NumClients)),
 
     lists:foreach(fun(_) ->

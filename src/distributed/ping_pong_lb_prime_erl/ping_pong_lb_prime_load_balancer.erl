@@ -1,5 +1,5 @@
-% ping_pong_lb_load_balancer.erl
--module(ping_pong_lb_load_balancer).
+% ping_pong_lb_prime_load_balancer.erl
+-module(ping_pong_lb_prime_load_balancer).
 -export([start/0, start/1, start/2]).
 
 start() ->

@@ -72,20 +72,20 @@ client(_, 0, _, Main, true) ->
 client(_, 0, _, Main, false) ->
     Main ! {client, self(), done}; % Notify the main process that client is done
 client(LoadBalancer, NumMessages, PrimeRange, Main, true) -> % Verbose mode
-    % Send the range to the server
+    % Send the range to the load balancer
     LoadBalancer ! {self(), PrimeRange},
 
-    % Wait for a pong message
+    % Wait for the found primes
     receive
         FoundPrimes ->
             io:format("Client ~p received: ~p~n", [self(), FoundPrimes]),
             client(LoadBalancer, NumMessages - 1, PrimeRange, Main, true) % Recursively send more messages
     end;
 client(LoadBalancer, NumMessages, PrimeRange, Main, false) -> % Silent mode
-    % Send the range to the server
+    % Send the range to the load balancer
     LoadBalancer ! {self(), PrimeRange},
 
-    % Wait for a pong message
+    % Wait for the found primes
     receive
         _FoundPrimes ->
             client(LoadBalancer, NumMessages - 1, PrimeRange, Main, false) % Recursively send more messages

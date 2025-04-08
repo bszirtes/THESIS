@@ -4,7 +4,7 @@
 usage() {
     echo "Usage: $0 <nodes> <num_servers> <num_clients> <num_messages> <delay_ms> <path-to-kubeconfig> [--no-load-balancer] [--verbose]"
     echo "  --no-load-balancer: Skip deploying the load balancer (use if load balancer is already running)"
-    echo "  --verbose:   Verbose output for debugging"
+    echo "  --verbose:          Verbose output for debugging"
     echo "  The node list is not used in the script, it is just a note."
     exit 1
 }
@@ -150,9 +150,13 @@ kubectl apply -f "$SCRIPT_DIR"/temp-client-job.yaml >>kubectl.log 2>&1
 kubectl wait --namespace ping-pong --for=condition=complete job/caf-client >>kubectl.log 2>&1
 
 # Check if the job completed successfully or failed
-job_status=$(kubectl get jobs --namespace ping-pong caf-client -o jsonpath='{.status.succeeded}')
-if [ "$job_status" -eq 0 ]; then
-    echo "Error: Client job failed."
+job_status=""
+while [[ "$job_status" != *"Complete"* && "$job_status" != *"Failed"* ]]; do
+    job_status=$(kubectl get job caf-client --namespace ping-pong -o jsonpath='{.status.conditions[*].type}')
+    sleep 1
+done
+if [[ "$job_status" != *"Complete"* ]]; then
+    echo "Error: Client job failed with job status: $job_status."
     # Delete client job and exit with failure
     kubectl delete job --namespace ping-pong caf-client >>kubectl.log 2>&1
     exit 1

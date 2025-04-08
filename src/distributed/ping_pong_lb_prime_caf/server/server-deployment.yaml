@@ -20,7 +20,6 @@ spec:
             - "--port=4243"
             - "--lb-address=caf-load-balancer"
             - "--lb-port=4242"
-            - "--verbose"
           ports:
             - containerPort: 4243
 ---

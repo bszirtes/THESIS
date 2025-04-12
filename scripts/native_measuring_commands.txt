@@ -2,41 +2,241 @@ prime_calculation variables
 "4000000" "8000000" "12000000"
 
 Erlang:
-sudo python3 ../../../scripts/measure_linux.py prime_calculation main "4000000" "8000000" "12000000" --rep 15 --file prime_calculation_erl_results_raw --nano 1000000
+sudo python3 ../../../scripts/measure_linux.py prime_calculation main \
+  "4000000" \
+  "8000000" \
+  "12000000" \
+  --rep 15 \
+  --file prime_calculation_erl_results_raw \
+  --nano 1000000
 
 CAF:
-sudo python3 ../../../scripts/measure_linux.py prime_calculation "" "4000000" "8000000" "12000000" --rep 15 --file prime_calculation_caf_results_raw --nano 1000000 --exe prime_calculation
+sudo python3 ../../../scripts/measure_linux.py prime_calculation "" \
+  "4000000" \
+  "8000000" \
+  "12000000" \
+  --rep 15 \
+  --file prime_calculation_caf_results_raw \
+  --nano 1000000 \
+  --exe prime_calculation
 
 ------------------------------
 
 ping_pong variables
-"50 50000" "50 100000" "50 200000" "50 500000" "100 50000" "100 100000" "100 200000" "100 500000" "200 50000" "200 100000" "200 200000" "200 500000" "400 50000" "400 100000" "400 200000" "400 500000"
+"50 50000" "50 100000" "50 200000" "50 500000"
+"100 50000" "100 100000" "100 200000" "100 500000"
+"200 50000" "200 100000" "200 200000" "200 500000"
+"400 50000" "400 100000" "400 200000" "400 500000"
 
 Erlang:
-sudo python3 ../../../scripts/measure_linux.py ping_pong main "50 50000" "50 100000" "50 200000" "50 500000" "100 50000" "100 100000" "100 200000" "100 500000" "200 50000" "200 100000" "200 200000" "200 500000" "400 50000" "400 100000" "400 200000" "400 500000" --rep 15 --file ping_pong_erl_results_raw --nano 1000000
+sudo python3 ../../../scripts/measure_linux.py ping_pong main \
+  "50 50000" \
+  "50 100000" \
+  "50 200000" \
+  "50 500000" \
+  "100 50000" \
+  "100 100000" \
+  "100 200000" \
+  "100 500000" \
+  "200 50000" \
+  "200 100000" \
+  "200 200000" \
+  "200 500000" \
+  "400 50000" \
+  "400 100000" \
+  "400 200000" \
+  "400 500000" \
+  --rep 15 \
+  --file ping_pong_erl_results_raw \
+  --nano 1000000
 
 CAF:
-sudo python3 ../../../scripts/measure_linux.py ping_pong "" "--clients=50 --messages=50000" "--clients=50 --messages=100000" "--clients=50 --messages=200000" "--clients=50 --messages=500000" "--clients=100 --messages=50000" "--clients=100 --messages=100000" "--clients=100 --messages=200000" "--clients=100 --messages=500000" "--clients=200 --messages=50000" "--clients=200 --messages=100000" "--clients=200 --messages=200000" "--clients=200 --messages=500000" "--clients=400 --messages=50000" "--clients=400 --messages=100000" "--clients=400 --messages=200000" "--clients=400 --messages=500000" --rep 15 --file ping_pong_caf_results_raw --exe ping_pong --nano 1000000
+sudo python3 ../../../scripts/measure_linux.py ping_pong "" \
+  "--clients=50 --messages=50000" \
+  "--clients=50 --messages=100000" \
+  "--clients=50 --messages=200000" \
+  "--clients=50 --messages=500000" \
+  "--clients=100 --messages=50000" \
+  "--clients=100 --messages=100000" \
+  "--clients=100 --messages=200000" \
+  "--clients=100 --messages=500000" \
+  "--clients=200 --messages=50000" \
+  "--clients=200 --messages=100000" \
+  "--clients=200 --messages=200000" \
+  "--clients=200 --messages=500000" \
+  "--clients=400 --messages=50000" \
+  "--clients=400 --messages=100000" \
+  "--clients=400 --messages=200000" \
+  "--clients=400 --messages=500000" \
+  --rep 15 \
+  --file ping_pong_caf_results_raw \
+  --exe ping_pong \
+  --nano 1000000
 
 ------------------------------
 
 ping_pong_lb variables
-"2 200 50000" "2 200 100000" "2 200 200000" "2 200 500000" "4 200 50000" "4 200 100000" "4 200 200000" "4 200 500000" "8 200 50000" "8 200 100000" "8 200 200000" "8 200 500000" "2 400 50000" "2 400 100000" "2 400 200000" "2 400 500000" "4 400 50000" "4 400 100000" "4 400 200000" "4 400 500000" "8 400 50000" "8 400 100000" "8 400 200000" "8 400 500000" 
+"2 200 50000" "2 200 100000" "2 200 200000" "2 200 500000"
+"4 200 50000" "4 200 100000" "4 200 200000" "4 200 500000"
+"8 200 50000" "8 200 100000" "8 200 200000" "8 200 500000"
+"2 400 50000" "2 400 100000" "2 400 200000" "2 400 500000"
+"4 400 50000" "4 400 100000" "4 400 200000" "4 400 500000"
+"8 400 50000" "8 400 100000" "8 400 200000" "8 400 500000"
 
 Erlang:
-sudo python3 ../../../scripts/measure_linux.py ping_pong_lb main "2 200 50000" "2 200 100000" "2 200 200000" "2 200 500000" "4 200 50000" "4 200 100000" "4 200 200000" "4 200 500000" "8 200 50000" "8 200 100000" "8 200 200000" "8 200 500000" "2 400 50000" "2 400 100000" "2 400 200000" "2 400 500000" "4 400 50000" "4 400 100000" "4 400 200000" "4 400 500000" "8 400 50000" "8 400 100000" "8 400 200000" "8 400 500000" --rep 15 --file ping_pong_lb_erl_results_raw --nano 1000000
+sudo python3 ../../../scripts/measure_linux.py ping_pong_lb main \
+  "2 200 50000" \
+  "2 200 100000" \
+  "2 200 200000" \
+  "2 200 500000" \
+  "4 200 50000" \
+  "4 200 100000" \
+  "4 200 200000" \
+  "4 200 500000" \
+  "8 200 50000" \
+  "8 200 100000" \
+  "8 200 200000" \
+  "8 200 500000" \
+  "2 400 50000" \
+  "2 400 100000" \
+  "2 400 200000" \
+  "2 400 500000" \
+  "4 400 50000" \
+  "4 400 100000" \
+  "4 400 200000" \
+  "4 400 500000" \
+  "8 400 50000" \
+  "8 400 100000" \
+  "8 400 200000" \
+  "8 400 500000" \
+  --rep 15 \
+  --file ping_pong_lb_erl_results_raw \
+  --nano 1000000
 
 CAF:
-sudo python3 ../../../scripts/measure_linux.py ping_pong_lb "" "--servers=2 --clients=200 --messages=50000" "--servers=2 --clients=200 --messages=100000" "--servers=2 --clients=200 --messages=200000" "--servers=2 --clients=200 --messages=500000" "--servers=4 --clients=200 --messages=50000" "--servers=4 --clients=200 --messages=100000" "--servers=4 --clients=200 --messages=200000" "--servers=4 --clients=200 --messages=500000" "--servers=8 --clients=200 --messages=50000" "--servers=8 --clients=200 --messages=100000" "--servers=8 --clients=200 --messages=200000" "--servers=8 --clients=200 --messages=500000" "--servers=2 --clients=400 --messages=50000" "--servers=2 --clients=400 --messages=100000" "--servers=2 --clients=400 --messages=200000" "--servers=2 --clients=400 --messages=500000" "--servers=4 --clients=400 --messages=50000" "--servers=4 --clients=400 --messages=100000" "--servers=4 --clients=400 --messages=200000" "--servers=4 --clients=400 --messages=500000" "--servers=8 --clients=400 --messages=50000" "--servers=8 --clients=400 --messages=100000" "--servers=8 --clients=400 --messages=200000" "--servers=8 --clients=400 --messages=500000" --rep 15 --file ping_pong_lb_caf_results_raw --exe ping_pong_lb --nano 1000000
+sudo python3 ../../../scripts/measure_linux.py ping_pong_lb "" \
+  "--servers=2 --clients=200 --messages=50000" \
+  "--servers=2 --clients=200 --messages=100000" \
+  "--servers=2 --clients=200 --messages=200000" \
+  "--servers=2 --clients=200 --messages=500000" \
+  "--servers=4 --clients=200 --messages=50000" \
+  "--servers=4 --clients=200 --messages=100000" \
+  "--servers=4 --clients=200 --messages=200000" \
+  "--servers=4 --clients=200 --messages=500000" \
+  "--servers=8 --clients=200 --messages=50000" \
+  "--servers=8 --clients=200 --messages=100000" \
+  "--servers=8 --clients=200 --messages=200000" \
+  "--servers=8 --clients=200 --messages=500000" \
+  "--servers=2 --clients=400 --messages=50000" \
+  "--servers=2 --clients=400 --messages=100000" \
+  "--servers=2 --clients=400 --messages=200000" \
+  "--servers=2 --clients=400 --messages=500000" \
+  "--servers=4 --clients=400 --messages=50000" \
+  "--servers=4 --clients=400 --messages=100000" \
+  "--servers=4 --clients=400 --messages=200000" \
+  "--servers=4 --clients=400 --messages=500000" \
+  "--servers=8 --clients=400 --messages=50000" \
+  "--servers=8 --clients=400 --messages=100000" \
+  "--servers=8 --clients=400 --messages=200000" \
+  "--servers=8 --clients=400 --messages=500000" \
+  --rep 15 \
+  --file ping_pong_lb_caf_results_raw \
+  --exe ping_pong_lb \
+  --nano 1000000
 
 ------------------------------
 
 ping_pong_lb_prime variables
-"2 200 50000 50" "2 200 100000 50" "2 200 200000 50" "2 200 500000 50" "4 200 50000 50" "4 200 100000 50" "4 200 200000 50" "4 200 500000 50" "8 200 50000 50" "8 200 100000 50" "8 200 200000 50" "8 200 500000 50" "2 400 50000 50" "2 400 100000 50" "2 400 200000 50" "2 400 500000 50" "4 400 50000 50" "4 400 100000 50" "4 400 200000 50" "4 400 500000 50" "8 400 50000 50" "8 400 100000 50" "8 400 200000 50" "8 400 500000 50" "2 200 50000 100" "2 200 100000 100" "2 200 200000 100" "2 200 500000 100" "4 200 50000 100" "4 200 100000 100" "4 200 200000 100" "4 200 500000 100" "8 200 50000 100" "8 200 100000 100" "8 200 200000 100" "8 200 500000 100" "2 400 50000 100" "2 400 100000 100" "2 400 200000 100" "2 400 500000 100" "4 400 50000 100" "4 400 100000 100" "4 400 200000 100" "4 400 500000 100" "8 400 50000 100" "8 400 100000 100" "8 400 200000 100" "8 400 500000 100"
+"2 200 50000 50"
+"2 200 100000 50"
+"2 200 200000 50"
+"4 200 50000 50"
+"4 200 100000 50"
+"4 200 200000 50"
+"8 200 50000 50"
+"8 200 100000 50"
+"8 200 200000 50"
+"2 400 50000 50"
+"2 400 100000 50"
+"2 400 200000 50"
+"4 400 50000 50"
+"4 400 100000 50"
+"4 400 200000 50"
+"8 400 50000 50"
+"8 400 100000 50"
+"8 400 200000 50"
+"2 200 50000 100"
+"2 200 100000 100"
+"2 200 200000 100"
+"4 200 50000 100"
+"4 200 100000 100"
+"4 200 200000 100"
+"8 200 50000 100"
+"8 200 100000 100"
+"8 200 200000 100"
+"2 400 50000 100"
+"2 400 100000 100"
+"2 400 200000 100"
+"4 400 50000 100"
+"4 400 100000 100"
+"4 400 200000 100"
+"8 400 50000 100"
+"8 400 100000 100"
+"8 400 200000 100"
 
 Erlang:
-sudo python3 ../../../scripts/measure_linux.py ping_pong_lb_prime main "2 200 50000 50" "2 200 100000 50" "2 200 200000 50" "2 200 500000 50" "4 200 50000 50" "4 200 100000 50" "4 200 200000 50" "4 200 500000 50" "8 200 50000 50" "8 200 100000 50" "8 200 200000 50" "8 200 500000 50" "2 400 50000 50" "2 400 100000 50" "2 400 200000 50" "2 400 500000 50" "4 400 50000 50" "4 400 100000 50" "4 400 200000 50" "4 400 500000 50" "8 400 50000 50" "8 400 100000 50" "8 400 200000 50" "8 400 500000 50" "2 200 50000 100" "2 200 100000 100" "2 200 200000 100" "2 200 500000 100" "4 200 50000 100" "4 200 100000 100" "4 200 200000 100" "4 200 500000 100" "8 200 50000 100" "8 200 100000 100" "8 200 200000 100" "8 200 500000 100" "2 400 50000 100" "2 400 100000 100" "2 400 200000 100" "2 400 500000 100" "4 400 50000 100" "4 400 100000 100" "4 400 200000 100" "4 400 500000 100" "8 400 50000 100" "8 400 100000 100" "8 400 200000 100" "8 400 500000 100" --rep 15 --file ping_pong_lb_prime_erl_results_raw --nano 1000000
+sudo python3 ../../../scripts/measure_linux.py ping_pong_lb_prime main \
+"2 200 50000 50" "2 200 100000 50" "2 200 200000 50" \
+"4 200 50000 50" "4 200 100000 50" "4 200 200000 50" \
+"8 200 50000 50" "8 200 100000 50" "8 200 200000 50" \
+"2 400 50000 50" "2 400 100000 50" "2 400 200000 50" \
+"4 400 50000 50" "4 400 100000 50" "4 400 200000 50" \
+"8 400 50000 50" "8 400 100000 50" "8 400 200000 50" \
+"2 200 50000 100" "2 200 100000 100" "2 200 200000 100" \
+"4 200 50000 100" "4 200 100000 100" "4 200 200000 100" \
+"8 200 50000 100" "8 200 100000 100" "8 200 200000 100" \
+"2 400 50000 100" "2 400 100000 100" "2 400 200000 100" \
+"4 400 50000 100" "4 400 100000 100" "4 400 200000 100" \
+"8 400 50000 100" "8 400 100000 100" "8 400 200000 100" \
+--rep 15 --file ping_pong_lb_prime_erl_results_raw --nano 1000000
 
 CAF:
-sudo python3 ../../../scripts/measure_linux.py ping_pong_lb_prime "" "--servers=2 --clients=200 --messages=50000 --range=50" "--servers=2 --clients=200 --messages=100000 --range=50" "--servers=2 --clients=200 --messages=200000 --range=50" "--servers=2 --clients=200 --messages=500000 --range=50" "--servers=4 --clients=200 --messages=50000 --range=50" "--servers=4 --clients=200 --messages=100000 --range=50" "--servers=4 --clients=200 --messages=200000 --range=50" "--servers=4 --clients=200 --messages=500000 --range=50" "--servers=8 --clients=200 --messages=50000 --range=50" "--servers=8 --clients=200 --messages=100000 --range=50" "--servers=8 --clients=200 --messages=200000 --range=50" "--servers=8 --clients=200 --messages=500000 --range=50" "--servers=2 --clients=400 --messages=50000 --range=50" "--servers=2 --clients=400 --messages=100000 --range=50" "--servers=2 --clients=400 --messages=200000 --range=50" "--servers=2 --clients=400 --messages=500000 --range=50" "--servers=4 --clients=400 --messages=50000 --range=50" "--servers=4 --clients=400 --messages=100000 --range=50" "--servers=4 --clients=400 --messages=200000 --range=50" "--servers=4 --clients=400 --messages=500000 --range=50" "--servers=8 --clients=400 --messages=50000 --range=50" "--servers=8 --clients=400 --messages=100000 --range=50" "--servers=8 --clients=400 --messages=200000 --range=50" "--servers=8 --clients=400 --messages=500000 --range=50" "--servers=2 --clients=200 --messages=50000 --range=100" "--servers=2 --clients=200 --messages=100000 --range=100" "--servers=2 --clients=200 --messages=200000 --range=100" "--servers=2 --clients=200 --messages=500000 --range=100" "--servers=4 --clients=200 --messages=50000 --range=100" "--servers=4 --clients=200 --messages=100000 --range=100" "--servers=4 --clients=200 --messages=200000 --range=100" "--servers=4 --clients=200 --messages=500000 --range=100" "--servers=8 --clients=200 --messages=50000 --range=100" "--servers=8 --clients=200 --messages=100000 --range=100" "--servers=8 --clients=200 --messages=200000 --range=100" "--servers=8 --clients=200 --messages=500000 --range=100" "--servers=2 --clients=400 --messages=50000 --range=100" "--servers=2 --clients=400 --messages=100000 --range=100" "--servers=2 --clients=400 --messages=200000 --range=100" "--servers=2 --clients=400 --messages=500000 --range=100" "--servers=4 --clients=400 --messages=50000 --range=100" "--servers=4 --clients=400 --messages=100000 --range=100" "--servers=4 --clients=400 --messages=200000 --range=100" "--servers=4 --clients=400 --messages=500000 --range=100" "--servers=8 --clients=400 --messages=50000 --range=100" "--servers=8 --clients=400 --messages=100000 --range=100" "--servers=8 --clients=400 --messages=200000 --range=100" "--servers=8 --clients=400 --messages=500000 --range=100" --rep 15 --file ping_pong_lb_prime_caf_results_raw --exe ping_pong_lb_prime --nano 1000000
+sudo python3 ../../../scripts/measure_linux.py ping_pong_lb_prime "" \
+"--servers=2 --clients=200 --messages=50000 --range=50" \
+"--servers=2 --clients=200 --messages=100000 --range=50" \
+"--servers=2 --clients=200 --messages=200000 --range=50" \
+"--servers=4 --clients=200 --messages=50000 --range=50" \
+"--servers=4 --clients=200 --messages=100000 --range=50" \
+"--servers=4 --clients=200 --messages=200000 --range=50" \
+"--servers=8 --clients=200 --messages=50000 --range=50" \
+"--servers=8 --clients=200 --messages=100000 --range=50" \
+"--servers=8 --clients=200 --messages=200000 --range=50" \
+"--servers=2 --clients=400 --messages=50000 --range=50" \
+"--servers=2 --clients=400 --messages=100000 --range=50" \
+"--servers=2 --clients=400 --messages=200000 --range=50" \
+"--servers=4 --clients=400 --messages=50000 --range=50" \
+"--servers=4 --clients=400 --messages=100000 --range=50" \
+"--servers=4 --clients=400 --messages=200000 --range=50" \
+"--servers=8 --clients=400 --messages=50000 --range=50" \
+"--servers=8 --clients=400 --messages=100000 --range=50" \
+"--servers=8 --clients=400 --messages=200000 --range=50" \
+"--servers=2 --clients=200 --messages=50000 --range=100" \
+"--servers=2 --clients=200 --messages=100000 --range=100" \
+"--servers=2 --clients=200 --messages=200000 --range=100" \
+"--servers=4 --clients=200 --messages=50000 --range=100" \
+"--servers=4 --clients=200 --messages=100000 --range=100" \
+"--servers=4 --clients=200 --messages=200000 --range=100" \
+"--servers=8 --clients=200 --messages=50000 --range=100" \
+"--servers=8 --clients=200 --messages=100000 --range=100" \
+"--servers=8 --clients=200 --messages=200000 --range=100" \
+"--servers=2 --clients=400 --messages=50000 --range=100" \
+"--servers=2 --clients=400 --messages=100000 --range=100" \
+"--servers=2 --clients=400 --messages=200000 --range=100" \
+"--servers=4 --clients=400 --messages=50000 --range=100" \
+"--servers=4 --clients=400 --messages=100000 --range=100" \
+"--servers=4 --clients=400 --messages=200000 --range=100" \
+"--servers=8 --clients=400 --messages=50000 --range=100" \
+"--servers=8 --clients=400 --messages=100000 --range=100" \
+"--servers=8 --clients=400 --messages=200000 --range=100" \
+--rep 15 --file ping_pong_lb_prime_caf_results_raw --exe ping_pong_lb_prime --nano 1000000
 

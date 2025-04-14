@@ -1,7 +1,0 @@
-Module,Function,Parameter,Runtime (s),Samples,Average (μW),Consumption (μJ),Sample frequency (ns),File
-ping_pong_lb_prime,,--servers=4 --clients=100 --messages=100000 --range=100,50.85665433700069,703,1087008.6805689912,55281624.729016386,1000000,ping_pong_lb_prime____2025-04-06-17-14-28
-ping_pong_lb_prime,,--servers=4 --clients=100 --messages=100000 --range=100,52.79354689000047,690,1294077.0388985511,68318916.83236362,1000000,ping_pong_lb_prime____2025-04-06-17-15-31
-ping_pong_lb_prime,,--servers=4 --clients=100 --messages=100000 --range=100,50.86324665400025,627,1467404.0101913873,74636932.11143363,1000000,ping_pong_lb_prime____2025-04-06-17-16-34
-ping_pong_lb_prime,,--servers=4 --clients=100 --messages=100000 --range=50,44.00473244800014,584,1070118.6876712325,47090286.538577616,1000000,ping_pong_lb_prime____2025-04-06-17-28-03
-ping_pong_lb_prime,,--servers=4 --clients=100 --messages=100000 --range=50,45.58667352300017,607,1046154.4283525541,47690700.37994876,1000000,ping_pong_lb_prime____2025-04-06-17-28-58
-ping_pong_lb_prime,,--servers=4 --clients=100 --messages=100000 --range=50,46.64811783599998,620,1028933.5239354841,47997812.26995317,1000000,ping_pong_lb_prime____2025-04-06-17-29-53

@@ -3,7 +3,11 @@ import csv
 import os
 
 results_file = sys.argv[1]
-json_dir = "measurements"
+
+if len(sys.argv) > 2:
+    json_dir = sys.argv[2]
+else:
+    json_dir = "measurements"
 
 missing = []
 found = []

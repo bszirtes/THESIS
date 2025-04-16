@@ -27,7 +27,8 @@ def process_csv(file_path, output_path, num_trials=10):
 
     for param, group in grouped:
         # Remove outliers in 'Consumption (μJ)'
-        group.loc[:, 'Consumption (μJ)'] = remove_outliers(group['Consumption (μJ)'])
+        group = group.copy()
+        group['Consumption (μJ)'] = remove_outliers(group['Consumption (μJ)'])
         group = group.dropna(subset=['Consumption (μJ)'])
 
         if len(group) > num_trials:

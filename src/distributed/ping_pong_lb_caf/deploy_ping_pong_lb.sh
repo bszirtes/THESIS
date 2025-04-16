@@ -2,7 +2,8 @@
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 <nodes> <num_servers> <num_clients> <num_messages> <delay_ms> <path-to-kubeconfig> [--no-load-balancer] [--verbose]"
+    echo "Usage: $0 <nodes> <num_servers> <num_clients> <num_messages> <delay_ms> [--no-load-balancer] [--verbose] [--kubeconfig /path/to/kubeconfig]"
+    echo "           [--server-image SERVER_IMAGE] [--client-image CLIENT_IMAGE]"
     echo "  --no-load-balancer: Skip deploying the load balancer (use if load balancer is already running)"
     echo "  --verbose:          Verbose output for debugging"
     echo "  The node list is not used in the script, it is just a note."
@@ -28,7 +29,7 @@ spec:
     spec:
       containers:
         - name: caf-server
-          image: localhost:5001/ping-pong-lb-server:v2
+          image: $SERVER_IMAGE
           ports:
             - containerPort: 4243
           args:
@@ -60,7 +61,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: caf-client
-          image: localhost:5001/ping-pong-client:v4
+          image: $CLIENT_IMAGE
           args:
             - "--server-address=caf-load-balancer"
             - "--server-port=4242"
@@ -73,12 +74,9 @@ EOF
 }
 
 # Check if the correct number of arguments is provided
-if [ "$#" -lt 6 ]; then
+if [ "$#" -lt 5 ]; then
     usage
 fi
-
-# Export KUBECONFIG
-export KUBECONFIG=$6
 
 # Get the directory of the current script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -88,29 +86,67 @@ NUM_SERVERS=$2
 NUM_CLIENTS=$3
 NUM_MESSAGES=$4
 DELAY_MS=$5
+shift 5
+
+# Default values for optional flags
 NO_LOAD_BALANCER=false
 VERBOSE=false
+KUBECONFIG="/home/eszibot/.kube/config"
+SERVER_IMAGE="localhost:5001/ping-pong-lb-server:v2"
+CLIENT_IMAGE="localhost:5001/ping-pong-client:v4"
 
 # Parse optional parameters
-for arg in "$@"; do
-    case "$arg" in
-    "--no-load-balancer")
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+    --no-load-balancer)
         NO_LOAD_BALANCER=true
         shift
         ;;
-    "--verbose")
+    --verbose)
         VERBOSE=true
         shift
         ;;
+    --kubeconfig)
+        if [[ -n "$2" && "$2" != --* ]]; then
+            KUBECONFIG="$2"
+            shift 2
+        else
+            echo "Error: --kubeconfig requires a path argument."
+            exit 1
+        fi
+        ;;
+    --server-image)
+        if [[ -n "$2" && "$2" != --* ]]; then
+            SERVER_IMAGE="$2"
+            shift 2
+        else
+            echo "Error: --server-image requires an image argument."
+            exit 1
+        fi
+        ;;
+    --client-image)
+        if [[ -n "$2" && "$2" != --* ]]; then
+            CLIENT_IMAGE="$2"
+            shift 2
+        else
+            echo "Error: --client-image requires an image argument."
+            exit 1
+        fi
+        ;;
+
+    *)
+        echo "Unknown option: $1"
+        exit 1
+        ;;
     esac
 done
-
-shift $((OPTIND - 1)) # Remove parsed options from positional parameters
 
 # Check if required parameters are provided
 if [ -z "$NUM_SERVERS" ] || [ -z "$NUM_CLIENTS" ] || [ -z "$NUM_MESSAGES" ] || [ -z "$DELAY_MS" ] || [ -z "$KUBECONFIG" ]; then
     usage
 fi
+
+export KUBECONFIG
 
 # Create YAML files dynamically with parameters
 create_server_yaml $VERBOSE

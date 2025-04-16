@@ -35,7 +35,6 @@ def run_scaphandre(folder_name, file_name, regex, nano, container, verbose):
     return subprocess.Popen(command, stdout=subprocess.PIPE if verbose else subprocess.DEVNULL,
                             stderr=subprocess.PIPE if verbose else subprocess.STDOUT, shell=True)
 
-# TODO: Make this optional with an argument
 def compile_program(program_exe, module):
     if program_exe == "beam.smp" or program_exe == "erlang":
         print(f"[INFO] Compiling Erlang module: {module}.erl")

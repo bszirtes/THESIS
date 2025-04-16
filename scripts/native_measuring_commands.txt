@@ -198,7 +198,9 @@ sudo python3 ../../../scripts/measure_linux.py ping_pong_lb_prime main \
 "2 400 50000 100" "2 400 100000 100" "2 400 200000 100" \
 "4 400 50000 100" "4 400 100000 100" "4 400 200000 100" \
 "8 400 50000 100" "8 400 100000 100" "8 400 200000 100" \
---rep 15 --file ping_pong_lb_prime_erl_results_raw --nano 1000000
+--rep 15 \
+--file ping_pong_lb_prime_erl_results_raw \
+--nano 1000000
 
 CAF:
 sudo python3 ../../../scripts/measure_linux.py ping_pong_lb_prime "" \
@@ -238,5 +240,8 @@ sudo python3 ../../../scripts/measure_linux.py ping_pong_lb_prime "" \
 "--servers=8 --clients=400 --messages=50000 --range=100" \
 "--servers=8 --clients=400 --messages=100000 --range=100" \
 "--servers=8 --clients=400 --messages=200000 --range=100" \
---rep 15 --file ping_pong_lb_prime_caf_results_raw --exe ping_pong_lb_prime --nano 1000000
+--rep 15 \
+--file ping_pong_lb_prime_caf_results_raw \
+--exe ping_pong_lb_prime \
+--nano 1000000
 

@@ -26,24 +26,17 @@ def process_csv(file_path, output_path, num_trials=10):
     filtered_data = []
 
     for param, group in grouped:
-        # Remove outliers in 'Runtime (s)'
-        group.loc[:, 'Runtime (s)'] = remove_outliers(group['Runtime (s)'])
-        group = group.dropna(subset=['Runtime (s)'])
-
-        # Remove outliers in 'Average (μW)'
-        group.loc[:, 'Average (μW)'] = remove_outliers(group['Average (μW)'])
-        group = group.dropna(subset=['Average (μW)'])
+        # Remove outliers in 'Consumption (μJ)'
+        group.loc[:, 'Consumption (μJ)'] = remove_outliers(group['Consumption (μJ)'])
+        group = group.dropna(subset=['Consumption (μJ)'])
 
         if len(group) > num_trials:
-            # Select the 'num_trials' trials closest to the median 'Consumption (μJ)'
             diff = (group['Consumption (μJ)'] - group['Consumption (μJ)'].median()).abs()
             best_indices = diff.nsmallest(num_trials).index
             group = group.loc[best_indices]
         elif len(group) > 0:
-            #if less than num_trials but more than zero, keep what is left.
             pass
         else:
-            #if group is empty, continue to next group
             continue
 
         filtered_data.append(group)
@@ -62,3 +55,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     process_csv(args.input_file, args.output_file, args.num_trials)
+

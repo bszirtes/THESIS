@@ -1,35 +1,38 @@
-import sys
+import argparse
 import csv
 import os
 
-results_file = sys.argv[1]
+def check_json_files(results_file, dir="measurements"):
+    """Checks for the presence of JSON files listed in the CSV results file."""
+    missing = []
+    found = []
 
-if len(sys.argv) > 2:
-    json_dir = sys.argv[2]
-else:
-    json_dir = "measurements"
+    with open(results_file, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            json_filename = row["File"] + ".json"
+            json_path = os.path.join(dir, json_filename)
 
-missing = []
-found = []
+            if os.path.isfile(json_path):
+                found.append(json_filename)
+            else:
+                missing.append(json_filename)
 
-with open(results_file, newline='') as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        json_filename = row["File"] + ".json"
-        json_path = os.path.join(json_dir, json_filename)
+    print("\n=== Found JSON files ===")
+    for f in found:
+        print(f)
 
-        if os.path.isfile(json_path):
-            found.append(json_filename)
-        else:
-            missing.append(json_filename)
+    print("\n=== Missing JSON files ===")
+    for f in missing:
+        print(f)
 
-print("\n=== Found JSON files ===")
-for f in found:
-    print(f)
+    print(f"\nChecked {len(found) + len(missing)} entries: {len(found)} found, {len(missing)} missing.")
 
-print("\n=== Missing JSON files ===")
-for f in missing:
-    print(f)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Check for missing JSON files listed in a CSV file.")
+    parser.add_argument("results_file", help="CSV file listing result entries")
+    parser.add_argument("--dir", default="measurements", help="Directory containing JSON files (default: 'measurements')")
+    args = parser.parse_args()
 
-print(f"\nChecked {len(found) + len(missing)} entries: {len(found)} found, {len(missing)} missing.")
+    check_json_files(args.results_file, args.dir)
 

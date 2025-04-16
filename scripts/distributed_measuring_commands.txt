@@ -1,0 +1,54 @@
+Distributed ping_pong variables
+"50 50000" "50 100000" "50 200000" "50 500000"
+"100 50000" "100 100000" "100 200000" "100 500000"
+"200 50000" "200 100000" "200 200000" "200 500000"
+"400 50000" "400 100000" "400 200000" "400 500000"
+
+Erlang:
+sudo python3 ../../../scripts/measure_linux.py deploy_ping_pong main \
+  "['node1@localhost','node2@localhost'] 50 50000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 50 100000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 50 200000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 50 500000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 100 50000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 100 100000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 100 200000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 100 500000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 200 50000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 200 100000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 200 200000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 200 500000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 400 50000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 400 100000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 400 200000 0 no-server" \
+  "['node1@localhost','node2@localhost'] 400 500000 0 no-server" \
+  --rep 15 \
+  --file distributed_ping_pong_erl_results_raw \
+  --exe erlang \
+  --nano 1000000
+
+CAF:
+sudo python3 ../../../scripts/measure_linux.py deploy_ping_pong "" \
+  "['kind-worker','kind-worker2'] 50 50000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 50 100000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 50 200000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 50 500000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 100 50000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 100 100000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 100 200000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 100 500000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 200 50000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 200 100000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 200 200000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 200 500000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 400 50000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 400 100000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 400 200000 0 --no-server" \
+  "['kind-worker','kind-worker2'] 400 500000 0 --no-server" \
+  --rep 15 \
+  --file distributed_ping_pong_caf_results_raw \
+  --container kind \
+  --nano 1000000
+
+------------------------------
+

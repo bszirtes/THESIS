@@ -18,7 +18,6 @@ spec:
           image: localhost:5001/ping-pong-server:v4
           args:
             - "--port=4242"
-            - "--verbose"
           ports:
             - containerPort: 4242
 ---

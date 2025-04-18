@@ -29,25 +29,12 @@ sudo python3 ../../../scripts/measure_linux.py deploy_ping_pong main \
 
 CAF:
 sudo python3 ../../../scripts/measure_linux.py deploy_ping_pong "" \
-  "['kind-worker','kind-worker2'] 50 50000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 50 100000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 50 200000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 50 500000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 100 50000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 100 100000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 100 200000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 100 500000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 200 50000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 200 100000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 200 200000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 200 500000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 400 50000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 400 100000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 400 200000 0 --no-server" \
-  "['kind-worker','kind-worker2'] 400 500000 0 --no-server" \
+  "['ping-pong-worker','ping-pong-worker2'] 50 50000 0 --no-server" \
+  "['ping-pong-worker','ping-pong-worker2'] 50 100000 0 --no-server" \
+  "['ping-pong-worker','ping-pong-worker2'] 100 50000 0 --no-server" \
   --rep 15 \
   --file distributed_ping_pong_caf_results_raw \
-  --container kind \
+  --container ping-pong \
   --nano 1000000
 
 ------------------------------

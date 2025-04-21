@@ -78,3 +78,19 @@ sudo python3 ../../../scripts/measure_linux.py deploy_ping_pong_lb "" \
   --container ping-pong \
   --nano 1000000
 
+------------------------------
+
+Distributed ping_pong_lb_prime
+
+sudo python3 ../../../scripts/measure_linux.py deploy_ping_pong_lb_prime "" \
+  "['ping-pong-worker','ping-pong-worker2','ping-pong-worker3','ping-pong-worker4','ping-pong-worker5','ping-pong-worker6','ping-pong-worker7','ping-pong-worker8'] 2 50 50000 50 --no-load-balancer" \
+  "['ping-pong-worker','ping-pong-worker2','ping-pong-worker3','ping-pong-worker4','ping-pong-worker5','ping-pong-worker6','ping-pong-worker7','ping-pong-worker8'] 2 50 50000 100 --no-load-balancer" \
+  "['ping-pong-worker','ping-pong-worker2','ping-pong-worker3','ping-pong-worker4','ping-pong-worker5','ping-pong-worker6','ping-pong-worker7','ping-pong-worker8'] 4 50 50000 50 --no-load-balancer" \
+  "['ping-pong-worker','ping-pong-worker2','ping-pong-worker3','ping-pong-worker4','ping-pong-worker5','ping-pong-worker6','ping-pong-worker7','ping-pong-worker8'] 4 50 50000 100 --no-load-balancer" \
+  "['ping-pong-worker','ping-pong-worker2','ping-pong-worker3','ping-pong-worker4','ping-pong-worker5','ping-pong-worker6','ping-pong-worker7','ping-pong-worker8'] 8 50 50000 50 --no-load-balancer" \
+  "['ping-pong-worker','ping-pong-worker2','ping-pong-worker3','ping-pong-worker4','ping-pong-worker5','ping-pong-worker6','ping-pong-worker7','ping-pong-worker8'] 8 50 50000 100 --no-load-balancer" \
+  --rep 15 \
+  --file distributed_ping_pong_lb_prime_caf_results_raw \
+  --container ping-pong \
+  --nano 1000000
+

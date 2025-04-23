@@ -82,6 +82,50 @@ sudo python3 ../../../scripts/measure_linux.py deploy_ping_pong_lb "" \
 
 Distributed ping_pong_lb_prime
 
+Erlang:
+sudo python3 ../../../scripts/measure_linux.py deploy_ping_pong_lb_prime main \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 200 50000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 200 100000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 200 200000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 400 50000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 400 100000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 400 200000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 200 50000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 200 100000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 200 200000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 400 50000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 400 100000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 2 400 200000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 200 50000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 200 100000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 200 200000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 400 50000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 400 100000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 400 200000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 200 50000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 200 100000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 200 200000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 400 50000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 400 100000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 4 400 200000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 200 50000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 200 100000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 200 200000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 400 50000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 400 100000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 400 200000 50 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 200 50000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 200 100000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 200 200000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 400 50000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 400 100000 100 no-load-balancer" \
+  "['node1@localhost','node2@localhost','node3@localhost','node4@localhost','node5@localhost','node6@localhost','node7@localhost','node8@localhost'] 8 400 200000 100 no-load-balancer" \
+  --rep 15 \
+  --file distributed_ping_pong_lb_prime_erl_results_raw \
+  --exe erlang \
+  --nano 1000000
+
+CAF:
 sudo python3 ../../../scripts/measure_linux.py deploy_ping_pong_lb_prime "" \
   "['ping-pong-worker','ping-pong-worker2','ping-pong-worker3','ping-pong-worker4','ping-pong-worker5','ping-pong-worker6','ping-pong-worker7','ping-pong-worker8'] 2 50 50000 50 --no-load-balancer" \
   "['ping-pong-worker','ping-pong-worker2','ping-pong-worker3','ping-pong-worker4','ping-pong-worker5','ping-pong-worker6','ping-pong-worker7','ping-pong-worker8'] 2 50 50000 100 --no-load-balancer" \
